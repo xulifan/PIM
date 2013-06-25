@@ -42,11 +42,12 @@ int main(int argc, char *argv[])
     t_end1=rtclock();
 	edge_init_time+=t_end1-t_start1;	
     
+    init_graph_info();
 
     cout<<"min_node max_node avg_node min_edge max_edge avg_edge min_sp max_sp avg_sp:"<<endl;
     cout<<min_node<<" "<<max_node<<" "<<total_node/num_graph<<" "<<min_edge<<" "<<max_edge<<" "<<total_edge/num_graph<<" "<<min_sp<<" "<<max_sp<<" "<<total_sp/num_graph<<endl;
     
-if(option ==1){
+if(option ==0){
     OpenCL_init();
 
     SPGK_GPU();
@@ -65,10 +66,12 @@ if(option ==1){
     
     clean_up();
 }
-else{
+else if(option ==1){
     SPGK_PIM();
 }
-
+else if(option ==2){
+    SPGK_mult_PIM();
+}
 
 
     total_end=rtclock();

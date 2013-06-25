@@ -134,12 +134,9 @@ uint32_t get_number_pim_compute_cores(pim_device_id pim_id, uint32_t core_type)
 }
 
 
-// Use PIM API discovery functions to find the number of PIMs within the system
-// As an exercise, this also finds the number of CPUs contained within those
-// PIMs. Currently, we only launch one thread per PIM, however, so that is
-// what this function returns.
 
 
+// return number of PIM devices
 unsigned int find_pims()
 {
     int failure = 0;
@@ -150,6 +147,8 @@ unsigned int find_pims()
     return num_pims;
 }
 
+// find number of CPUs in each PIM
+// find number of GPUs in each PIM
 void map_pims(int num_pims, int *num_gpus, int *num_cpus, int *gpus_per_pim, int *cpus_per_pim, pim_device_id *list_of_pims)
 {
     int i;
@@ -162,16 +161,16 @@ void map_pims(int num_pims, int *num_gpus, int *num_cpus, int *gpus_per_pim, int
     //for(i=0;i<num_pims;i++) printf("%d\n",list_of_pims[i]);
 
     for (i = 0; i < (int)num_pims; i++) {
-	     gpus_per_pim[i] = get_number_pim_compute_cores(list_of_pims[i], PIM_GPU_CORES);
-		 number_of_pim_gpus += gpus_per_pim[i];
-         cpus_per_pim[i] = get_number_pim_compute_cores(list_of_pims[i], PIM_CPU_CORES);
-		 number_of_pim_cpus += cpus_per_pim[i];
+        gpus_per_pim[i] = get_number_pim_compute_cores(list_of_pims[i], PIM_GPU_CORES);
+        number_of_pim_gpus += gpus_per_pim[i];
+        cpus_per_pim[i] = get_number_pim_compute_cores(list_of_pims[i], PIM_CPU_CORES);
+        number_of_pim_cpus += cpus_per_pim[i];
 	}
 
     printf("Number of PIM CPUs: %u \n", number_of_pim_cpus);
     printf("Number of PIM GPUs: %u \n", number_of_pim_gpus);
 
-	*num_gpus = number_of_pim_gpus;
+    *num_gpus = number_of_pim_gpus;
     *num_cpus = number_of_pim_cpus;
     return;
 }
@@ -195,10 +194,11 @@ void get_pim_gpu_ids(int num_gpus, pim_device_id *list_of_gpus)
 */
 
 
+// query the PIM device properties
 void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device_id *list_of_pims)
 {
 
-    printf("\nProperies:\n\n");
+    printf("\nProperties:\n\n");
     int failure=0;
 
     for (int i = 0; i < num_pims; i++) {
@@ -236,7 +236,7 @@ void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device
             printf("NUM COMPUTE UNITS: %d\n", num_cus);
             printf("ENGINE CLOCK: %5.2f\n\n", (double)eng_clock/1000 );
             
-		}
+        }
 
         if ( num_cpus > 0 ) {
             uint32_t eng_clock;
@@ -252,6 +252,9 @@ void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device
     return;
 }
 
+// set the common arguments for pim_spawn
+// common arguments including: kernel source file, program build flags, work item dimension, global work size,
+// local work size, number of events before kernel launch, pre-events list, event after the kernel launch
 void pim_spawn_args(void **args,size_t *sizes, size_t *nargs, char *ocl_source, char *build_flags, int dim, size_t *glbl, size_t *lcl, int *num_pre_event, cl_event * pre_event_list, cl_event *post_event_list)
 {
     size_t nargs_tmp=0;

@@ -282,9 +282,10 @@ void output(int argc, char *agrv[]);
 
 //spk PIM
 void SPGK_PIM();
-void pim_launch_vert_gauss_kernel(void *vert, void *feat1, void *feat2, int n1, int n2, int nfeat, double param, pim_device_id target);
-void pim_launch_edge_kernel(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, int edge1, int edge2, int node1, int node2, double param, pim_device_id target);
-void pim_launch_reduce_kernel(void *input, void *result, int num, pim_device_id target);
+void SPGK_mult_PIM();
+void pim_launch_vert_gauss_kernel(void *vert, void *feat1, void *feat2, int n1, int n2, int nfeat, double param, pim_device_id target, cl_event *complete);
+void pim_launch_edge_kernel(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, int edge1, int edge2, int node1, int node2, double param, pim_device_id target, cl_event *complete);
+void pim_launch_reduce_kernel(void *input, void *result, int num, pim_device_id target, cl_event *complete);
 double pim_launch_SPGK(int g1, int g2, void *pim_feat_g1, void *pim_edge_w1, void *pim_edge_x1, void *pim_edge_y1, void *pim_feat_g2, void *pim_edge_w2, void *pim_edge_x2, void *pim_edge_y2, pim_device_id target_gpu);
 
 //spk gpu

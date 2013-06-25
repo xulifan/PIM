@@ -26,6 +26,6 @@ all:
 	$(CC) -D_PROPERTIES_ -D_NO_CPU_COUNTERS_ $(CFLAGS) $(LDLIBS) -I$(INC_DIR) -I./ -L$(LIB_DIR) -l$(OUTPUT_LIB) $(SOURCE_FILE)  -o $(EXECUTABLE)
 
 run:
-	run_pim_emulation.sh -c $(CONFIG_DIR)/2.xml -e ~/Desktop/pimemu/lib -t ./tmp -o ./result --run ./$(EXECUTABLE) -directory ~/Desktop/Data/test -platform 1 -gk 0 -option 0 -vertex 0 -gauss 0.1
+	run_pim_emulation.sh -c $(CONFIG_DIR)/2.xml -e ~/Desktop/pimemu/lib -t ./tmp -o ./result --run ./$(EXECUTABLE) -directory ~/Desktop/Data/test -platform 1 -gk 0 -option 2 -vertex 0 -gauss 0.1
 clean:
 	rm -rf *~ $(EXECUTABLE)

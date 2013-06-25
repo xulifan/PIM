@@ -19,6 +19,7 @@ if(idx1 < n1 && idx2 < n2){
     for (int i = 0 ; i < n_feat ; i ++) {
 		double diff = feat_g1[g1_offset + i] - feat_g2[g2_offset + i];
 		vk += (diff * diff);
+        
     }
 	vert_gaussian[idx1 * n2 + idx2] = exp(-vk/paramy);
 }   
