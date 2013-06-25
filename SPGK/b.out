@@ -1,0 +1,82 @@
+run_pim_emulation.sh -c /home/lifxu/Desktop/pimemu/lib/config/2.xml -e ~/Desktop/pimemu/lib -t ./tmp -o ./result --run ./spk.exe -directory ~/Desktop/Data/test -platform 1 -gk 0 -option 0 -vertex 0 -gauss 0.1
+AMD CodeXL GPU Profiler V2.6.2153 is Enabled
+Specified output file /home/lifxu/Desktop/Benchmarks/SPGK/tmp/pimemu_gpucounterdata.csv already exists, It will be overwritten.
+PIM OpenCl: Found following GPU devices:
+0 Tahiti
+Arguments:
+-directory
+/home/lifxu/Desktop/Data/test
+-platform
+1
+-gk
+0
+-option
+0
+-vertex
+0
+-gauss
+0.1
+Number of graphs is 10
+min_node max_node avg_node min_edge max_edge avg_edge min_sp max_sp avg_sp:
+10 30 18 9 29 17 12 46 25
+Session output path : /home/lifxu/Desktop/Benchmarks/SPGK/tmp/pimemu_gpucounterdata.csv
+ 
+ *************************************************************************************
+ Finished profiling and generated files: 
+ /home/lifxu/Desktop/Benchmarks/SPGK/tmp/pimemu_cpucounterdata.csv 
+ /home/lifxu/Desktop/Benchmarks/SPGK/tmp/pimemu_gpucounterdata.csv 
+ *************************************************************************************
+ 
+PIM OpenCl: Found following GPU devices:
+0 Tahiti
+
+
+Executing PIM CPU performance analytical model...
+---------------------------------------------------
+
+model config file: /home/lifxu/Desktop/pimemu/lib/config/2.xml.
+model profiling file: /home/lifxu/Desktop/Benchmarks/SPGK/tmp/pimemu_cpucounterdata.csv.
+model output file: /home/lifxu/Desktop/Benchmarks/SPGK/tmp/model_cpu.csv.
+
+PIM OpenCl: Found following GPU devices:
+0 Tahiti
+
+Executing PIM GPU performance analytical model...
+---------------------------------------------------
+model config file: /home/lifxu/Desktop/pimemu/lib/config/2.xml.
+model profiling file: /home/lifxu/Desktop/Benchmarks/SPGK/tmp/pimemu_gpucounterdata.csv.
+model output file: /home/lifxu/Desktop/Benchmarks/SPGK/tmp/model_gpu.csv.
+Number of PIM GPUs modeled: 2.
+
+First 32 output lines
+
+Kernel Thread  EHP GPU   PIM0 GPU0 PIM1 GPU0
+vertex_gauss_kernel, 9437,  0.000001063,  0.000003949,  0.000003949
+edge_kernel_1d, 9438,  0.000000052,  0.000000039,  0.000000039
+ 
+ *************************************************************************************
+ Finished modeling and generated files: 
+ /home/lifxu/Desktop/Benchmarks/SPGK/tmp/model_cpu.csv 
+ /home/lifxu/Desktop/Benchmarks/SPGK/tmp/model_gpu.csv 
+ *************************************************************************************
+ 
+PIM OpenCl: Found following GPU devices:
+0 Tahiti
+
+
+Executing PIM ordering model...
+---------------------------------------------------
+
+model config file: /home/lifxu/Desktop/pimemu/lib/config/2.xml.
+model ordering file: /home/lifxu/Desktop/Benchmarks/SPGK/tmp/pimemu_timelinedata.csv.
+model cpu profiling file: /home/lifxu/Desktop/Benchmarks/SPGK/tmp/model_cpu.csv.
+model gpu profiling file: /home/lifxu/Desktop/Benchmarks/SPGK/tmp/model_gpu.csv.
+model output file: /home/lifxu/Desktop/Benchmarks/SPGK/result/emulation_result.csv.
+
+ 
+ *************************************************************************************
+ Finished timeline ordering and generated files: 
+ /home/lifxu/Desktop/Benchmarks/SPGK/result/emulation_result.csv 
+ /home/lifxu/Desktop/Benchmarks/SPGK/result/emulation_result.pdf 
+ *************************************************************************************
+ 
