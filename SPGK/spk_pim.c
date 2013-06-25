@@ -22,9 +22,6 @@ void SPGK_PIM()
     void *pim_edge_y1;
     void *pim_edge_y2;
 
-    void *pim_vertex;
-    void *pim_edge;
-
     double *pim_mapped_feat_g1;
     double *pim_mapped_feat_g2;
     double *pim_mapped_edge_w1;
@@ -52,7 +49,7 @@ void SPGK_PIM()
     
     // only use one GPU, get its id
     for (int i = 0; i < num_threads; i++) {
-		if (gpus_per_pim[i] > 0 ){
+        if (gpus_per_pim[i] > 0 ){
             target_gpu=list_of_pims[i];
             printf("Target GPU is %d\n",target_gpu);
             break;
@@ -62,10 +59,10 @@ void SPGK_PIM()
     // **** PIM emulation Start Mark  *********
 	pim_emu_begin();
 
-    for(int i=num_graph-1;i>=0;i--){    
-	    
+    //for(int i=num_graph-1;i>=0;i--){      
+	for(int i=0;i<num_graph;i++){    
         n_node1=graph[i].n_node;
-	    n_edge1=graph[i].n_sp_edge;
+        n_edge1=graph[i].n_sp_edge;
 
         pim_feat_g1 = pim_malloc(sizeof(double) * n_node1*n_feat, target_gpu, PIM_MEM_PIM_READ | PIM_MEM_HOST_WRITE, PIM_PLATFORM_OPENCL_GPU);
         pim_edge_w1 = pim_malloc(sizeof(double) * n_edge1, target_gpu, PIM_MEM_PIM_READ | PIM_MEM_HOST_WRITE, PIM_PLATFORM_OPENCL_GPU);
@@ -87,8 +84,9 @@ void SPGK_PIM()
         pim_unmap(pim_mapped_edge_x1);
         pim_unmap(pim_mapped_edge_y1);
 
-        for(int j=0;j<=i;j++){
-            
+        //for(int j=0;j<=i;j++){
+        for(int j=i;j<num_graph;j++){
+    
             n_node2=graph[j].n_node;
             n_edge2=graph[j].n_sp_edge;
             //printf("%d %d %d %d\n",i,j,n_edge1,n_edge2);
@@ -111,15 +109,22 @@ void SPGK_PIM()
             pim_unmap(pim_mapped_edge_w2);
             pim_unmap(pim_mapped_edge_x2);
             pim_unmap(pim_mapped_edge_y2);
-
-            double paramx = vk_params[0];
+            
+            double sum=pim_launch_SPGK(i, j, pim_feat_g1, pim_edge_w1, pim_edge_x1, pim_edge_y1, pim_feat_g2, pim_edge_w2, pim_edge_x2, pim_edge_y2, target_gpu);
+            K_Matrix[i][j]=sum;
+            K_Matrix[j][i]=sum;
+            
+            /*double paramx = vk_params[0];
             double paramy = vk_params[1];
+
+            void *pim_vertex;
+            void *pim_edge;
 
             pim_vertex = pim_malloc(sizeof(double) *n_node1*n_node2, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
 
             if(n_edge1>n_edge2) pim_edge = pim_malloc(sizeof(double) *n_edge1, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
-	        else pim_edge = pim_malloc(sizeof(double) *n_edge2, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
-	        
+            else pim_edge = pim_malloc(sizeof(double) *n_edge2, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
+
             if(n_edge1>=n_edge2){
                 pim_launch_vert_gauss_kernel(pim_vertex,pim_feat_g1,pim_feat_g2,n_node1,n_node2,n_feat,paramy,target_gpu);
                 pim_launch_edge_kernel(pim_edge, pim_vertex, pim_edge_w1, pim_edge_w2, pim_edge_x1, pim_edge_x2, pim_edge_y1, pim_edge_y2, n_edge1, n_edge2, n_node1, n_node2, paramx, target_gpu);
@@ -145,16 +150,17 @@ void SPGK_PIM()
             
             pim_free(pim_vertex);
             pim_free(pim_edge);
-            pim_free(pim_reduce_output);
+            pim_free(pim_reduce_output);*/
+
+            K_Matrix[i][j]=sum;
+            K_Matrix[j][i]=sum;
 
             pim_free(pim_feat_g2);
             pim_free(pim_edge_w2);
             pim_free(pim_edge_x2);
             pim_free(pim_edge_y2);
 
-            K_Matrix[i][j]=sum;
-            K_Matrix[j][i]=sum;
-            //printf("%d %d %d %d %lf\n",i,j,n_edge1,n_edge2,sum);
+            
             
         }
         pim_free(pim_feat_g1);
@@ -175,6 +181,55 @@ void SPGK_PIM()
 
 }
 
+double pim_launch_SPGK(int g1, int g2, void *pim_feat_g1, void *pim_edge_w1, void *pim_edge_x1, void *pim_edge_y1,
+    void *pim_feat_g2, void *pim_edge_w2, void *pim_edge_x2, void *pim_edge_y2, pim_device_id target_gpu)
+{
+    int n_node1=graph[g1].n_node;
+    int n_edge1=graph[g1].n_sp_edge;
+
+    int n_node2=graph[g2].n_node;
+    int n_edge2=graph[g2].n_sp_edge;
+
+    double paramx = vk_params[0];
+    double paramy = vk_params[1];
+
+    void *pim_vertex;
+    void *pim_edge;
+    
+    pim_vertex = pim_malloc(sizeof(double) *n_node1*n_node2, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
+
+    if(n_edge1>n_edge2) pim_edge = pim_malloc(sizeof(double) *n_edge1, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
+	else pim_edge = pim_malloc(sizeof(double) *n_edge2, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
+	        
+    if(n_edge1>=n_edge2){
+        pim_launch_vert_gauss_kernel(pim_vertex,pim_feat_g1,pim_feat_g2,n_node1,n_node2,n_feat,paramy,target_gpu);
+        pim_launch_edge_kernel(pim_edge, pim_vertex, pim_edge_w1, pim_edge_w2, pim_edge_x1, pim_edge_x2, pim_edge_y1, pim_edge_y2, n_edge1, n_edge2, n_node1, n_node2, paramx, target_gpu);
+                
+    }
+    else{
+        pim_launch_vert_gauss_kernel(pim_vertex,pim_feat_g2,pim_feat_g1,n_node2,n_node1,n_feat,paramy,target_gpu);
+        pim_launch_edge_kernel(pim_edge, pim_vertex, pim_edge_w2, pim_edge_w1, pim_edge_x2, pim_edge_x1, pim_edge_y2, pim_edge_y1, n_edge2, n_edge1, n_node2, n_node1, paramx, target_gpu);
+                
+    }
+
+    int num;
+    if(n_edge1>n_edge2) num=n_edge1;
+    else num=n_edge2;
+    int outputsize=(num%BLOCK_SIZE_1D==0)?num/BLOCK_SIZE_1D:(( num/BLOCK_SIZE_1D )+ 1);
+    void *pim_reduce_output = pim_malloc(sizeof(double)*outputsize, target_gpu, PIM_MEM_PIM_WRITE | PIM_MEM_HOST_READ,PIM_PLATFORM_OPENCL_GPU);
+    pim_launch_reduce_kernel(pim_edge, pim_reduce_output, num, target_gpu);
+    double sum = 0;
+    double *pim_mapped_reduce_output=(double *)pim_map(pim_reduce_output,PIM_PLATFORM_OPENCL_GPU);
+    for(int l=0;l<outputsize;l++) sum+=pim_mapped_reduce_output[l];
+    
+    pim_unmap(pim_mapped_reduce_output);
+
+    pim_free(pim_vertex);
+    pim_free(pim_edge);
+    pim_free(pim_reduce_output);
+    //printf("%d %d %f\n",g1,g2,sum);
+    return sum;
+}
 
 void pim_launch_reduce_kernel(void *input, void *result, int num, pim_device_id target)
 {
