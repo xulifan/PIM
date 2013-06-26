@@ -317,8 +317,8 @@ void init_graph_info()
         graph1_num[id]=G1;
         graph2_num[id]=G2;
     }
-    print1d(graph1_num,num_comparison);
-    print1d(graph2_num,num_comparison);
+    //print1d(graph1_num,num_comparison);
+    //print1d(graph2_num,num_comparison);
     
     
     /*initliazing graph_node to store number of nodes for each graph

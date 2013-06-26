@@ -114,17 +114,18 @@ double gaussian(__global double *feat_g1, __global double *feat_g2, int idx1, in
 
 // no pre-calculation of vertex_kernel
 // calculate vertex_kernel when needed
-__kernel void edge_kernel_(__global double *edge_kernel, __global double *feat_g1, __global double *feat_g2, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, int n_edge1, int n_edge2, int n_node1, int n_node2, int n_feat, double paramx, double paramy)
+__kernel void edge_kernel_multipim_1(__global double *edge_kernel, __global double *feat_g1, __global double *feat_g2, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, int n_edge1, int n_edge2, int n_node1, int n_node2, int n_feat, double paramx, double paramy, int start_edge, int end_edge, int own_num_edge)
 {
     int i=get_global_id(0);
     int x1,x2,y1,y2;
     double e1,e2;
     double k=0;
     
-if(i<n_edge1){
-    x1=edge_x1[i];
-    y1=edge_y1[i];
-    e1=edge_g1[i];
+if(i<own_num_edge){
+    int edge_id=i+start_edge;
+    x1=edge_x1[edge_id];
+    y1=edge_y1[edge_id];
+    e1=edge_g1[edge_id];
     for(int j=0;j<n_edge2;j++){
     
         x2=edge_x2[j];

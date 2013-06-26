@@ -280,13 +280,18 @@ void output(int argc, char *agrv[]);
 
 
 
-//spk PIM
+//spk one pim per pair
 void SPGK_PIM();
 void SPGK_mult_PIM();
 void pim_launch_vert_gauss_kernel(void *vert, void *feat1, void *feat2, int n1, int n2, int nfeat, double param, pim_device_id target, cl_event *complete);
 void pim_launch_edge_kernel(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, int edge1, int edge2, int node1, int node2, double param, pim_device_id target, cl_event *complete);
 void pim_launch_reduce_kernel(void *input, void *result, int num, pim_device_id target, cl_event *complete);
 double pim_launch_SPGK(int g1, int g2, void *pim_feat_g1, void *pim_edge_w1, void *pim_edge_x1, void *pim_edge_y1, void *pim_feat_g2, void *pim_edge_w2, void *pim_edge_x2, void *pim_edge_y2, pim_device_id target_gpu);
+
+
+//spk multi pim per pai
+void SPGK_mult_PIM_one_pair_1();
+void pim_launch_edge_kernel_multipim_1(void *edge, void *feat1, void *feat2, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, int edge1, int edge2, int node1, int node2, int nfeat, double paramx, double paramy, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete);
 
 //spk gpu
 void SPGK_GPU();        //copy data of a pair of graphs into GPU memroy for each kernel execution
