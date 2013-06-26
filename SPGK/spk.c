@@ -7,8 +7,8 @@
 #include "cpu_func.c"
 #include "opencl_init.c"
 #include "spk_gpu.c"
-#include "spk_pim.c"
-
+#include "spk_one_pim_per_pair.c"
+#include "spk_multi_pim_per_pair.c"
 
 int main(int argc, char *argv[])
 {
