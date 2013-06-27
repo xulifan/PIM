@@ -1,8 +1,9 @@
 // Use multiple PIMs on one single pair of graphs
 // Each PIM can have only one GPU for now
-// each GPU calculate the full vertex kernel(redundant computation)
+// each GPU finds its set of edges
+// each GPU calculate the needed vertex kernel
 // each GPU taks some edges from one graph and compair with all edges in another graph
-void SPGK_mult_PIM_one_pair_2()
+void SPGK_mult_PIM_one_pair_3()
 {
     int num_gpus;
     int num_cpus;
@@ -40,6 +41,12 @@ void SPGK_mult_PIM_one_pair_2()
     double **pim_mapped_reduce_output;
 
     int *outputsize;
+
+    int **vert_num_map;
+    int *n_vert_local;
+    void **pim_vert_num_map;
+    int **pim_mapped_vert_num_map;
+
 
     // PIM PER MODEL
     num_pims = find_pims();
@@ -98,7 +105,12 @@ void SPGK_mult_PIM_one_pair_2()
     pim_reduce_output=(void **)malloc(sizeof(void *)*num_gpus);
     pim_mapped_reduce_output=(double **)malloc(sizeof(double *)*num_gpus);
 
-    outputsize=(int *)malloc(sizeof(int)*num_gpus);  
+    outputsize=(int *)malloc(sizeof(int)*num_gpus); 
+
+    vert_num_map=(int **)malloc(sizeof(int *)*num_gpus);   
+    n_vert_local=(int *)malloc(sizeof(int)*num_gpus);
+    pim_vert_num_map=(void **)malloc(sizeof(void *)*num_gpus);
+    pim_mapped_vert_num_map=(int **)malloc(sizeof(int *)*num_gpus);  
     // **** PIM emulation Start Mark  *********
 
 
@@ -174,21 +186,47 @@ void SPGK_mult_PIM_one_pair_2()
             pim_unmap(pim_mapped_edge_x2[cur_gpu]);
             pim_unmap(pim_mapped_edge_y2[cur_gpu]);
 
+            vert_num_map[cur_gpu]=(int *)calloc(n_node1,sizeof(int));
+            int count=1;
+            for(int i=start_edge;i<end_edge;i++){
+                int x=graph[g1].sp_edge_x[i];
+                int y=graph[g1].sp_edge_y[i];
+                //printf("GPU %d %d %d\n",cur_gpu,x,y);
+                if(vert_num_map[cur_gpu][x]==0){
+                    vert_num_map[cur_gpu][x]=count;
+                    count+=1;
+                }
+                if(vert_num_map[cur_gpu][y]==0){
+                    vert_num_map[cur_gpu][y]=count;
+                    count+=1;
+                }
+            }
+            n_vert_local[cur_gpu]=count;
+            int n_node1_local=count;
+            //print1d(vert_num_map[cur_gpu],n_node1);
+            pim_vert_num_map[cur_gpu] = pim_malloc(sizeof(int) *n_node1, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
+            pim_mapped_vert_num_map[cur_gpu]=(int *)pim_map(pim_vert_num_map[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
+            memcpy(pim_mapped_vert_num_map[cur_gpu],vert_num_map[cur_gpu],sizeof(int)*n_node1);
+            pim_unmap(pim_mapped_vert_num_map[cur_gpu]);
+
+
             double paramx = vk_params[0];
             double paramy = vk_params[1];
             
-            pim_vertex[cur_gpu] = pim_malloc(sizeof(double) *n_node1*n_node2, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
+            pim_vertex[cur_gpu] = pim_malloc(sizeof(double) *n_node1_local*n_node2, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
             pim_edge[cur_gpu] = pim_malloc(sizeof(double) *own_num_edges, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
         
-            pim_launch_vert_gauss_kernel(pim_vertex[cur_gpu],pim_feat_g1[cur_gpu],pim_feat_g2[cur_gpu],n_node1,n_node2,n_feat,paramy,target_gpu[cur_gpu], &complete_vert[cur_gpu]);
-            pim_launch_edge_kernel_multipim_2(pim_edge[cur_gpu], pim_vertex[cur_gpu], pim_edge_w1[cur_gpu], pim_edge_w2[cur_gpu], pim_edge_x1[cur_gpu], pim_edge_x2[cur_gpu], pim_edge_y1[cur_gpu], pim_edge_y2[cur_gpu], n_edge1, n_edge2, n_node1, n_node2, paramx, start_edge, end_edge, own_num_edges, target_gpu[cur_gpu], &complete_edge[cur_gpu]);
-            //pim_launch_edge_kernel_multipim_1(pim_edge[cur_gpu], pim_feat_g1[cur_gpu], pim_feat_g2[cur_gpu], pim_edge_w1[cur_gpu], pim_edge_w2[cur_gpu], pim_edge_x1[cur_gpu], pim_edge_x2[cur_gpu], pim_edge_y1[cur_gpu], pim_edge_y2[cur_gpu], n_edge1, n_edge2, n_node1, n_node2, n_feat, paramx, paramy, start_edge, end_edge, own_num_edges, target_gpu[cur_gpu], &complete_edge[cur_gpu]);
+            pim_launch_vert_gauss_3(pim_vertex[cur_gpu],pim_feat_g1[cur_gpu],pim_feat_g2[cur_gpu],pim_vert_num_map[cur_gpu],n_node1_local,n_node2,n_feat,paramy,target_gpu[cur_gpu], &complete_vert[cur_gpu]);
+            pim_launch_edge_kernel_multipim_3(pim_edge[cur_gpu], pim_vertex[cur_gpu], pim_edge_w1[cur_gpu], pim_edge_w2[cur_gpu], pim_edge_x1[cur_gpu], pim_edge_x2[cur_gpu], pim_edge_y1[cur_gpu], pim_edge_y2[cur_gpu], pim_vert_num_map[cur_gpu], n_edge1, n_edge2, n_node1, n_node2, paramx, start_edge, end_edge, own_num_edges, target_gpu[cur_gpu], &complete_edge[cur_gpu]);
+            
             int num=own_num_edges;
             
             outputsize[cur_gpu]=(num%BLOCK_SIZE_1D==0)?num/BLOCK_SIZE_1D:(( num/BLOCK_SIZE_1D )+ 1);
             pim_reduce_output[cur_gpu] = pim_malloc(sizeof(double)*outputsize[cur_gpu], target_gpu[cur_gpu], PIM_MEM_PIM_WRITE | PIM_MEM_HOST_READ,PIM_PLATFORM_OPENCL_GPU);
 
             pim_launch_reduce_kernel(pim_edge[cur_gpu], pim_reduce_output[cur_gpu], num, target_gpu[cur_gpu], &complete_reduce[cur_gpu]);
+
+            free(vert_num_map[cur_gpu]);
         }
 
         // collect results from different GPUs
@@ -226,6 +264,8 @@ void SPGK_mult_PIM_one_pair_2()
             pim_free(pim_edge_w1[cur_gpu]);
             pim_free(pim_edge_x1[cur_gpu]);
             pim_free(pim_edge_y1[cur_gpu]);
+
+            pim_free(pim_vert_num_map[cur_gpu]);
 
             
             
@@ -267,6 +307,10 @@ void SPGK_mult_PIM_one_pair_2()
     free(pim_mapped_reduce_output);
 
     free(outputsize);
+    free(pim_vert_num_map);
+    free(vert_num_map);
+    free(n_vert_local);
+    free(pim_mapped_vert_num_map);
 
     free(list_of_pims);
     free(gpus_per_pim);
@@ -274,10 +318,80 @@ void SPGK_mult_PIM_one_pair_2()
 
 }
 
-void pim_launch_edge_kernel_multipim_2(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, int edge1, int edge2, int node1, int node2, double param, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete)
+void pim_launch_vert_gauss_3(void *vert, void *feat1, void *feat2, void *vert_num_map, int n1_local, int n2, int nfeat, double param, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"graphkernels.cl";
-    char * kernel_nm = (char *)"edge_kernel_multipim_2";
+    char * kernel_nm = (char *)"vertex_gauss_multiplim_3";
+    pim_f gpu_kernel;
+    
+    void * args[1024];
+    size_t sizes[1024];
+    size_t nargs = 0;
+    int dim = 2;
+    int num_pre_event = 0;
+    size_t globalItemSize[2],localItemSize[2];
+
+    localItemSize[0]=BLOCK_SIZE_2D;
+    localItemSize[1]=BLOCK_SIZE_2D;
+	
+    globalItemSize[0]=(n1_local%localItemSize[0]==0)?n1_local:localItemSize[0]*((n1_local/localItemSize[0])+1);
+    globalItemSize[1]=(n2%localItemSize[1]==0)?n2:localItemSize[1]*((n2/localItemSize[1])+1);
+
+    gpu_kernel.func_name = (void*)kernel_nm;
+
+    pim_spawn_args(args,sizes, &nargs, source_nm, (char *)" -D __GPU__", dim, globalItemSize, localItemSize, &num_pre_event, NULL, NULL);
+
+    size_t tnargs = nargs;
+
+    // kernel arguments
+
+    args[tnargs] = vert;
+    sizes[tnargs] = sizeof(void *);
+    tnargs++;
+
+    args[tnargs] = feat1;
+    sizes[tnargs] = sizeof(void *);
+    tnargs++;
+
+    args[tnargs] = feat2;
+    sizes[tnargs] = sizeof(void *);
+    tnargs++;
+
+    args[tnargs] = vert_num_map;
+    sizes[tnargs] = sizeof(void *);
+    tnargs++;
+
+    args[tnargs] = &n_feat;
+    sizes[tnargs] = sizeof(int);
+    tnargs++;
+
+    args[tnargs] = &n1_local;
+    sizes[tnargs] = sizeof(int);
+    tnargs++;   
+
+    args[tnargs] = &n2;
+    sizes[tnargs] = sizeof(int);
+    tnargs++;         
+
+    args[tnargs] = &param;
+    sizes[tnargs] = sizeof(double);
+    tnargs++;
+
+// insert compeletion event
+
+    args[OPENCL_ARG_POSTEVENT] = complete;
+    sizes[OPENCL_ARG_POSTEVENT] = sizeof(cl_event);
+
+    pim_spawn(gpu_kernel, (void**)args, sizes, tnargs, target, PIM_PLATFORM_OPENCL_GPU);
+
+
+}
+
+
+void pim_launch_edge_kernel_multipim_3(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, void *vert_num_map, int edge1, int edge2, int node1, int node2, double param, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete)
+{
+    char * source_nm = (char *)"graphkernels.cl";
+    char * kernel_nm = (char *)"edge_kernel_multipim_3";
     pim_f gpu_kernel;
 
     void * args[1024];
@@ -332,6 +446,10 @@ void pim_launch_edge_kernel_multipim_2(void *edge, void *vert, void *w1, void *w
     sizes[tnargs] = sizeof(void *);
     tnargs++;
 
+    args[tnargs] = vert_num_map;
+    sizes[tnargs] = sizeof(void *);
+    tnargs++;
+
     args[tnargs] = &edge1;
     sizes[tnargs] = sizeof(int);
     tnargs++;
@@ -373,3 +491,4 @@ void pim_launch_edge_kernel_multipim_2(void *edge, void *vert, void *w1, void *w
 
     
 }
+

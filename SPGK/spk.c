@@ -10,6 +10,7 @@
 #include "spk_one_pim_per_pair.c"
 #include "spk_multi_pim_per_pair_1.c"
 #include "spk_multi_pim_per_pair_2.c"
+#include "spk_multi_pim_per_pair_3.c"
 
 int main(int argc, char *argv[])
 {
@@ -62,10 +63,6 @@ if(option ==0){
     cout<<"reduce     time: "<<reduce_time<<endl;
 
     cl_clean_up();
-    
-    
-    
-    clean_up();
 }
 else if(option ==1){
     SPGK_PIM();
@@ -78,6 +75,9 @@ else if(option ==3){
 }
 else if(option ==4){
     SPGK_mult_PIM_one_pair_2();
+}
+else if(option ==5){
+    SPGK_mult_PIM_one_pair_3();
 }
 
 
@@ -93,6 +93,8 @@ else if(option ==4){
 	//NormalizeKMatrix();
 
     output(argc, argv);
+
+    clean_up();
 
     return 0;
 }
