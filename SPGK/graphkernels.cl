@@ -142,3 +142,30 @@ if(i<own_num_edge){
     return;
 }
 
+__kernel void edge_kernel_multipim_2(__global double *edge_kernel, __global double *vertex_kernel, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, int n_edge1, int n_edge2, int n_node1, int n_node2, double paramx, int start_edge, int end_edge, int own_num_edge)
+{
+    int i=get_global_id(0);
+    int x1,x2,y1,y2;
+    double e1,e2;
+    double k=0;
+    
+if(i<own_num_edge){
+    int edge_id=i+start_edge;
+    x1=edge_x1[edge_id];
+    y1=edge_y1[edge_id];
+    e1=edge_g1[edge_id];
+    for(int j=0;j<n_edge2;j++){
+    
+        x2=edge_x2[j];
+        y2=edge_y2[j];
+        e2=edge_g2[j];
+        
+        double k_edge = fmax(0.0,paramx - fabs(e1-e2));
+        if(k_edge>0) k_edge = vertex_kernel[x1*n_node2+x2] * k_edge * vertex_kernel[y1*n_node2+y2];
+        k+=k_edge;
+    }
+    edge_kernel[i]=k;
+}
+
+    return;
+}

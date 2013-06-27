@@ -8,7 +8,8 @@
 #include "opencl_init.c"
 #include "spk_gpu.c"
 #include "spk_one_pim_per_pair.c"
-#include "spk_multi_pim_per_pair.c"
+#include "spk_multi_pim_per_pair_1.c"
+#include "spk_multi_pim_per_pair_2.c"
 
 int main(int argc, char *argv[])
 {
@@ -75,7 +76,9 @@ else if(option ==2){
 else if(option ==3){
     SPGK_mult_PIM_one_pair_1();
 }
-
+else if(option ==4){
+    SPGK_mult_PIM_one_pair_2();
+}
 
 
     total_end=rtclock();

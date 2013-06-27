@@ -1,4 +1,4 @@
-// Use multiple PIMs one one single pair of graphs
+// Use multiple PIMs on one single pair of graphs
 // Each PIM can have only one GPU for now
 // no vertex kernel
 // each GPU taks some edged from one graph and compair with all edges in another graph
@@ -281,7 +281,7 @@ void pim_launch_edge_kernel_multipim_1(void *edge, void *feat1, void *feat2, voi
 
     localItemSize=BLOCK_SIZE_1D;
 	
-    globalItemSize=(edge1%localItemSize==0)?edge1:localItemSize*((edge1/localItemSize)+1);
+    globalItemSize=(own_num_edge%localItemSize==0)?own_num_edge:localItemSize*((own_num_edge/localItemSize)+1);
 	
 
     gpu_kernel.func_name = (void*)kernel_nm;

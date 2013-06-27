@@ -33,5 +33,7 @@ run2:
 	run_pim_emulation.sh -c $(CONFIG_DIR)/2.xml -e ~/Desktop/pimemu/lib -t ./tmp -o ./result --run ./$(EXECUTABLE) -directory ~/Desktop/Data/test -platform 1 -gk 0 -option 2 -vertex 0 -gauss 0.1
 run3:
 	run_pim_emulation.sh -c $(CONFIG_DIR)/2.xml -e ~/Desktop/pimemu/lib -t ./tmp -o ./result --run ./$(EXECUTABLE) -directory ~/Desktop/Data/test -platform 1 -gk 0 -option 3 -vertex 0 -gauss 0.1
+run4:
+	run_pim_emulation.sh -c $(CONFIG_DIR)/2.xml -e ~/Desktop/pimemu/lib -t ./tmp -o ./result --run ./$(EXECUTABLE) -directory ~/Desktop/Data/test -platform 1 -gk 0 -option 4 -vertex 0 -gauss 0.1
 clean:
 	rm -rf *~ $(EXECUTABLE)
