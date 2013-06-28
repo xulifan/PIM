@@ -1,3 +1,34 @@
+void input_process()
+{
+    double t_start1,t_end1;
+
+    t_start1=rtclock();
+    for(int i =0;i<num_graph;i++) read_graph(i);
+    for(int i =0;i<num_graph;i++) init_adj_list(i);
+
+    pack_adj_list();
+    t_end1=rtclock();
+    read_graph_time+=t_end1-t_start1;
+	
+	t_start1=rtclock();
+    
+    for(int i =0;i<num_graph;i++) convert_to_sp(i);
+    t_end1=rtclock();
+	convert_kernel_time+=t_end1-t_start1;
+
+	t_start1=rtclock();
+    for(int i =0;i<num_graph;i++) count_sp_edge(i);
+    for(int i =0;i<num_graph;i++) init_edge(i);
+    pack_sp_edge();
+    t_end1=rtclock();
+	edge_init_time+=t_end1-t_start1;	
+    
+    init_graph_info();
+
+    cout<<"min_node max_node avg_node min_edge max_edge avg_edge min_sp max_sp avg_sp:"<<endl;
+    cout<<min_node<<" "<<max_node<<" "<<total_node/num_graph<<" "<<min_edge<<" "<<max_edge<<" "<<total_edge/num_graph<<" "<<min_sp<<" "<<max_sp<<" "<<total_sp/num_graph<<endl;
+}
+
 void read_input_file(int argc, char *argv[])
 {
     if(argc<11){

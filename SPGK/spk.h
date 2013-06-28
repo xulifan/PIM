@@ -259,6 +259,7 @@ double ***malloc3ddouble(int x, int y, int z);
 
 
 //read input
+void input_process();
 void read_input_file(int argc, char *argv[]);
 void read_graph(int i);
 void init_graph_info();
@@ -299,8 +300,8 @@ void pim_launch_edge_kernel_multipim_2(void *edge, void *vert, void *w1, void *w
 
 //spk multi pim per pair 3
 void SPGK_mult_PIM_one_pair_3();
-void pim_launch_vert_gauss_3(void *vert, void *feat1, void *feat2, void *vert_num_map, int n1_local, int n2, int nfeat, double param, pim_device_id target, cl_event *complete);
-void pim_launch_edge_kernel_multipim_3(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, void *vert_num_map, int edge1, int edge2, int node1, int node2, double param, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete);
+void pim_launch_vert_gauss_multiplim_3(void *vert, void *feat1, void *feat2, void *vert_num_map, void *vert_num_ord, int n1_local, int n2, int nfeat, double param, pim_device_id target, cl_event *complete);
+void pim_launch_edge_kernel_multipim_3(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, void *vert_num_map, void *vert_num_ord, int edge1, int edge2, int node1, int node2, double param, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete);
 
 
 //spk gpu

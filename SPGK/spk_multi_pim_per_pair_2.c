@@ -1,4 +1,4 @@
-// Use multiple PIMs on one single pair of graphs
+// Use multiple PIMs on one single pair of graphs (scheme 2)
 // Each PIM can have only one GPU for now
 // each GPU calculate the full vertex kernel(redundant computation)
 // each GPU taks some edges from one graph and compair with all edges in another graph
@@ -74,7 +74,6 @@ void SPGK_mult_PIM_one_pair_2()
     }
     
     
-
     pim_feat_g1=(void **)malloc(sizeof(void *)*num_gpus);
     pim_edge_w1=(void **)malloc(sizeof(void *)*num_gpus);
     pim_edge_x1=(void **)malloc(sizeof(void *)*num_gpus);
@@ -100,8 +99,6 @@ void SPGK_mult_PIM_one_pair_2()
 
     outputsize=(int *)malloc(sizeof(int)*num_gpus);  
     // **** PIM emulation Start Mark  *********
-
-
     pim_emu_begin();
     
     for(int g1_tmp=0;g1_tmp<num_graph;g1_tmp++){
@@ -213,8 +210,6 @@ void SPGK_mult_PIM_one_pair_2()
             pim_free(pim_vertex[cur_gpu]);
             pim_free(pim_edge[cur_gpu]);
             pim_free(pim_reduce_output[cur_gpu]);
-
-
             
             //printf("graph %d and graph %d from GPU %d with results %lf\n",g1,g2,j,sum);
             pim_free(pim_feat_g2[cur_gpu]);
@@ -226,8 +221,6 @@ void SPGK_mult_PIM_one_pair_2()
             pim_free(pim_edge_w1[cur_gpu]);
             pim_free(pim_edge_x1[cur_gpu]);
             pim_free(pim_edge_y1[cur_gpu]);
-
-            
             
         }
         K_Matrix[g1][g2]=sum;
@@ -274,6 +267,10 @@ void SPGK_mult_PIM_one_pair_2()
 
 }
 
+// edge kernel for multiple PIMs on one signle pair of graphs (scheme 2)
+// each PIM calculates all the vertex similarities (exact the same computation for all PIMs)
+// each PIM gets some number of edges from G1
+// each PIM loops through all edges in G2
 void pim_launch_edge_kernel_multipim_2(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, int edge1, int edge2, int node1, int node2, double param, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"graphkernels.cl";

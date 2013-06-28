@@ -1,4 +1,4 @@
-// Use multiple PIMs on one single pair of graphs
+// Use multiple PIMs on one single pair of graphs (scheme 3)
 // Each PIM can have only one GPU for now
 // each GPU finds its set of edges
 // each GPU calculate the needed vertex kernel
@@ -43,9 +43,12 @@ void SPGK_mult_PIM_one_pair_3()
     int *outputsize;
 
     int **vert_num_map;
+    int **vert_num_ord;
     int *n_vert_local;
     void **pim_vert_num_map;
+    void **pim_vert_num_ord;
     int **pim_mapped_vert_num_map;
+    int **pim_mapped_vert_num_ord;
 
 
     // PIM PER MODEL
@@ -107,13 +110,15 @@ void SPGK_mult_PIM_one_pair_3()
 
     outputsize=(int *)malloc(sizeof(int)*num_gpus); 
 
-    vert_num_map=(int **)malloc(sizeof(int *)*num_gpus);   
+    vert_num_map=(int **)malloc(sizeof(int *)*num_gpus); 
+    vert_num_ord=(int **)malloc(sizeof(int *)*num_gpus);   
     n_vert_local=(int *)malloc(sizeof(int)*num_gpus);
     pim_vert_num_map=(void **)malloc(sizeof(void *)*num_gpus);
+    pim_vert_num_ord=(void **)malloc(sizeof(void *)*num_gpus);
     pim_mapped_vert_num_map=(int **)malloc(sizeof(int *)*num_gpus);  
+    pim_mapped_vert_num_ord=(int **)malloc(sizeof(int *)*num_gpus);
+
     // **** PIM emulation Start Mark  *********
-
-
     pim_emu_begin();
     
     for(int g1_tmp=0;g1_tmp<num_graph;g1_tmp++){
@@ -187,6 +192,7 @@ void SPGK_mult_PIM_one_pair_3()
             pim_unmap(pim_mapped_edge_y2[cur_gpu]);
 
             vert_num_map[cur_gpu]=(int *)calloc(n_node1,sizeof(int));
+            vert_num_ord[cur_gpu]=(int *)calloc(n_node1,sizeof(int));
             int count=1;
             for(int i=start_edge;i<end_edge;i++){
                 int x=graph[g1].sp_edge_x[i];
@@ -194,10 +200,12 @@ void SPGK_mult_PIM_one_pair_3()
                 //printf("GPU %d %d %d\n",cur_gpu,x,y);
                 if(vert_num_map[cur_gpu][x]==0){
                     vert_num_map[cur_gpu][x]=count;
+                    vert_num_ord[cur_gpu][count-1]=x;
                     count+=1;
                 }
                 if(vert_num_map[cur_gpu][y]==0){
                     vert_num_map[cur_gpu][y]=count;
+                    vert_num_ord[cur_gpu][count-1]=y;
                     count+=1;
                 }
             }
@@ -205,9 +213,13 @@ void SPGK_mult_PIM_one_pair_3()
             int n_node1_local=count;
             //print1d(vert_num_map[cur_gpu],n_node1);
             pim_vert_num_map[cur_gpu] = pim_malloc(sizeof(int) *n_node1, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
+            pim_vert_num_ord[cur_gpu] = pim_malloc(sizeof(int) *n_node1, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
             pim_mapped_vert_num_map[cur_gpu]=(int *)pim_map(pim_vert_num_map[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
+            pim_mapped_vert_num_ord[cur_gpu]=(int *)pim_map(pim_vert_num_ord[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
+            memcpy(pim_mapped_vert_num_ord[cur_gpu],vert_num_ord[cur_gpu],sizeof(int)*n_node1);
             memcpy(pim_mapped_vert_num_map[cur_gpu],vert_num_map[cur_gpu],sizeof(int)*n_node1);
             pim_unmap(pim_mapped_vert_num_map[cur_gpu]);
+            pim_unmap(pim_mapped_vert_num_ord[cur_gpu]);
 
 
             double paramx = vk_params[0];
@@ -216,8 +228,8 @@ void SPGK_mult_PIM_one_pair_3()
             pim_vertex[cur_gpu] = pim_malloc(sizeof(double) *n_node1_local*n_node2, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
             pim_edge[cur_gpu] = pim_malloc(sizeof(double) *own_num_edges, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
         
-            pim_launch_vert_gauss_3(pim_vertex[cur_gpu],pim_feat_g1[cur_gpu],pim_feat_g2[cur_gpu],pim_vert_num_map[cur_gpu],n_node1_local,n_node2,n_feat,paramy,target_gpu[cur_gpu], &complete_vert[cur_gpu]);
-            pim_launch_edge_kernel_multipim_3(pim_edge[cur_gpu], pim_vertex[cur_gpu], pim_edge_w1[cur_gpu], pim_edge_w2[cur_gpu], pim_edge_x1[cur_gpu], pim_edge_x2[cur_gpu], pim_edge_y1[cur_gpu], pim_edge_y2[cur_gpu], pim_vert_num_map[cur_gpu], n_edge1, n_edge2, n_node1, n_node2, paramx, start_edge, end_edge, own_num_edges, target_gpu[cur_gpu], &complete_edge[cur_gpu]);
+            pim_launch_vert_gauss_multiplim_3(pim_vertex[cur_gpu],pim_feat_g1[cur_gpu],pim_feat_g2[cur_gpu],pim_vert_num_map[cur_gpu],pim_vert_num_ord[cur_gpu],n_node1_local,n_node2,n_feat,paramy,target_gpu[cur_gpu], &complete_vert[cur_gpu]);
+            pim_launch_edge_kernel_multipim_3(pim_edge[cur_gpu], pim_vertex[cur_gpu], pim_edge_w1[cur_gpu], pim_edge_w2[cur_gpu], pim_edge_x1[cur_gpu], pim_edge_x2[cur_gpu], pim_edge_y1[cur_gpu], pim_edge_y2[cur_gpu], pim_vert_num_map[cur_gpu], pim_vert_num_ord[cur_gpu], n_edge1, n_edge2, n_node1, n_node2, paramx, start_edge, end_edge, own_num_edges, target_gpu[cur_gpu], &complete_edge[cur_gpu]);
             
             int num=own_num_edges;
             
@@ -227,6 +239,7 @@ void SPGK_mult_PIM_one_pair_3()
             pim_launch_reduce_kernel(pim_edge[cur_gpu], pim_reduce_output[cur_gpu], num, target_gpu[cur_gpu], &complete_reduce[cur_gpu]);
 
             free(vert_num_map[cur_gpu]);
+            free(vert_num_ord[cur_gpu]);
         }
 
         // collect results from different GPUs
@@ -241,7 +254,6 @@ void SPGK_mult_PIM_one_pair_3()
             ASSERT_CL_RETURN(clerr);
             clerr = clWaitForEvents(1, &complete_reduce[cur_gpu]) ;
             ASSERT_CL_RETURN(clerr);
-
             
             pim_mapped_reduce_output[cur_gpu]=(double *)pim_map(pim_reduce_output[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
             for(int l=0;l<outputsize[cur_gpu];l++) sum+=pim_mapped_reduce_output[cur_gpu][l];
@@ -252,8 +264,6 @@ void SPGK_mult_PIM_one_pair_3()
             pim_free(pim_edge[cur_gpu]);
             pim_free(pim_reduce_output[cur_gpu]);
 
-
-            
             //printf("graph %d and graph %d from GPU %d with results %lf\n",g1,g2,j,sum);
             pim_free(pim_feat_g2[cur_gpu]);
             pim_free(pim_edge_w2[cur_gpu]);
@@ -266,8 +276,7 @@ void SPGK_mult_PIM_one_pair_3()
             pim_free(pim_edge_y1[cur_gpu]);
 
             pim_free(pim_vert_num_map[cur_gpu]);
-
-            
+            pim_free(pim_vert_num_ord[cur_gpu]);
             
         }
         K_Matrix[g1][g2]=sum;
@@ -309,8 +318,11 @@ void SPGK_mult_PIM_one_pair_3()
     free(outputsize);
     free(pim_vert_num_map);
     free(vert_num_map);
+    free(pim_vert_num_ord);
+    free(vert_num_ord);
     free(n_vert_local);
     free(pim_mapped_vert_num_map);
+    free(pim_mapped_vert_num_ord);
 
     free(list_of_pims);
     free(gpus_per_pim);
@@ -318,7 +330,23 @@ void SPGK_mult_PIM_one_pair_3()
 
 }
 
-void pim_launch_vert_gauss_3(void *vert, void *feat1, void *feat2, void *vert_num_map, int n1_local, int n2, int nfeat, double param, pim_device_id target, cl_event *complete)
+
+// each GPU calculates the needed vertex similarities and store them in vert[]][]
+// vert_num_map is used to store the vertex number mapping:
+//    for example: if G1 has 5 nodes and G2 has n nodes
+//                 GPU1 has 0->1, 0->2
+//                 GPU2 has 0->3, 0->4 0->5;
+//                 the length of vert_num_map is 6
+//                 the size of vert[][] for GPU1 is vert[3][n] (3 distinct nodes from G1)
+//                 the size of vert[][] for GPU2 is vert[4][n] (4 distince nodes from G1)
+//                 vert_num_map for GPU1 is:
+//                   index: 0 1 2 3 4 5
+//                   value: 1 2 3 0 0 0
+//                 vert_num_map for GPU2 is:
+//                   index: 0 1 2 3 4 5
+//                   value: 1 0 0 2 3 4
+//                 so for GPU2, if it needs similarity for node 4, just go to vert[vert_num_map[4]-1][...]
+void pim_launch_vert_gauss_multiplim_3(void *vert, void *feat1, void *feat2, void *vert_num_map, void *vert_num_ord, int n1_local, int n2, int nfeat, double param, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"graphkernels.cl";
     char * kernel_nm = (char *)"vertex_gauss_multiplim_3";
@@ -361,6 +389,10 @@ void pim_launch_vert_gauss_3(void *vert, void *feat1, void *feat2, void *vert_nu
     sizes[tnargs] = sizeof(void *);
     tnargs++;
 
+    args[tnargs] = vert_num_ord;
+    sizes[tnargs] = sizeof(void *);
+    tnargs++;
+
     args[tnargs] = &n_feat;
     sizes[tnargs] = sizeof(int);
     tnargs++;
@@ -387,8 +419,10 @@ void pim_launch_vert_gauss_3(void *vert, void *feat1, void *feat2, void *vert_nu
 
 }
 
-
-void pim_launch_edge_kernel_multipim_3(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, void *vert_num_map, int edge1, int edge2, int node1, int node2, double param, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete)
+// each GPU gets some number of edges from G1 to compare with all edges in G2
+// compute similarities for edges numbering from start_edge to end_edge
+// during the computation, an vertex number mapping is needed to find the correct vertex similarity stored in vert[][]
+void pim_launch_edge_kernel_multipim_3(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, void *vert_num_map, void *vert_num_ord, int edge1, int edge2, int node1, int node2, double param, int start_edge, int end_edge, int own_num_edge, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"graphkernels.cl";
     char * kernel_nm = (char *)"edge_kernel_multipim_3";
@@ -447,6 +481,10 @@ void pim_launch_edge_kernel_multipim_3(void *edge, void *vert, void *w1, void *w
     tnargs++;
 
     args[tnargs] = vert_num_map;
+    sizes[tnargs] = sizeof(void *);
+    tnargs++;
+
+    args[tnargs] = vert_num_ord;
     sizes[tnargs] = sizeof(void *);
     tnargs++;
 

@@ -118,6 +118,7 @@ void SPGK_PIM()
             pim_unmap(pim_mapped_edge_y2);
             
             double sum=pim_launch_SPGK(i, j, pim_feat_g1, pim_edge_w1, pim_edge_x1, pim_edge_y1, pim_feat_g2, pim_edge_w2, pim_edge_x2, pim_edge_y2, target_gpu);
+
             K_Matrix[i][j]=sum;
             K_Matrix[j][i]=sum;
             
@@ -310,17 +311,10 @@ void SPGK_mult_PIM()
             pim_unmap(pim_mapped_edge_w2[j]);
             pim_unmap(pim_mapped_edge_x2[j]);
             pim_unmap(pim_mapped_edge_y2[j]);
-            
-
-
+      
             double paramx = vk_params[0];
             double paramy = vk_params[1];
-
-            
-
-            
-            
-            
+      
             pim_vertex[j] = pim_malloc(sizeof(double) *n_node1*n_node2, target_gpu[j], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
 
             if(n_edge1>n_edge2) pim_edge[j] = pim_malloc(sizeof(double) *n_edge1, target_gpu[j], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
@@ -387,9 +381,7 @@ void SPGK_mult_PIM()
             pim_free(pim_edge_w1[j]);
             pim_free(pim_edge_x1[j]);
             pim_free(pim_edge_y1[j]);
-
-            
-            
+      
         }
         
         free(complete_vert);
@@ -432,7 +424,7 @@ void SPGK_mult_PIM()
 
 }
 
-
+// apply SPGK on a pair of graphs on one single PIM
 double pim_launch_SPGK(int g1, int g2, void *pim_feat_g1, void *pim_edge_w1, void *pim_edge_x1, void *pim_edge_y1,
     void *pim_feat_g2, void *pim_edge_w2, void *pim_edge_x2, void *pim_edge_y2, pim_device_id target_gpu)
 {
@@ -506,6 +498,7 @@ double pim_launch_SPGK(int g1, int g2, void *pim_feat_g1, void *pim_edge_w1, voi
     return sum;
 }
 
+// reduction kernel, sum input[] into a small array result[]
 void pim_launch_reduce_kernel(void *input, void *result, int num, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"graphkernels.cl";
@@ -556,7 +549,8 @@ void pim_launch_reduce_kernel(void *input, void *result, int num, pim_device_id 
 
 }
 
-
+// vertex kernel
+// apply gaussian kernel on the vertices
 void pim_launch_vert_gauss_kernel(void *vert, void *feat1, void *feat2, int n1, int n2, int nfeat, double param, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"graphkernels.cl";
@@ -622,6 +616,10 @@ void pim_launch_vert_gauss_kernel(void *vert, void *feat1, void *feat2, int n1, 
 
 }
 
+// edge kernel
+// each GPU thread is in charge of one edge from g1
+// each GPU thread loops through all edges in g2
+// vert[][] stored the similarities for vertices from the vertex kernel
 void pim_launch_edge_kernel(void *edge, void *vert, void *w1, void *w2, void *x1, void *x2, void *y1, void *y2, int edge1, int edge2, int node1, int node2, double param, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"graphkernels.cl";

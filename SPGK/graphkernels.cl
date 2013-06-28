@@ -116,6 +116,8 @@ double gaussian(__global double *feat_g1, __global double *feat_g2, int idx1, in
 
 // no pre-calculation of vertex_kernel
 // calculate vertex_kernel when needed
+// each PIM gets some number of edges from G1
+// each PIM loops through all edges in G2
 __kernel void edge_kernel_multipim_1(__global double *edge_kernel, __global double *feat_g1, __global double *feat_g2, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, int n_edge1, int n_edge2, int n_node1, int n_node2, int n_feat, double paramx, double paramy, int start_edge, int end_edge, int own_num_edge)
 {
     int i=get_global_id(0);
@@ -144,6 +146,9 @@ if(i<own_num_edge){
     return;
 }
 
+// the vertex similarities are pre-calculated and stored in vertex_kernel[][]
+// each PIM gets some number of edges from G1
+// each PIM loops through all edges in G2 
 __kernel void edge_kernel_multipim_2(__global double *edge_kernel, __global double *vertex_kernel, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, int n_edge1, int n_edge2, int n_node1, int n_node2, double paramx, int start_edge, int end_edge, int own_num_edge)
 {
     int i=get_global_id(0);
@@ -172,7 +177,8 @@ if(i<own_num_edge){
     return;
 }
 
-__kernel void vertex_gauss_multiplim_3(__global double *vert_gaussian, __global double *feat_g1, __global double *feat_g2, __global int *vert_num_map, int n_feat, int n1_local, int n2, double paramy)
+
+__kernel void vertex_gauss_multiplim_3(__global double *vert_gaussian, __global double *feat_g1, __global double *feat_g2, __global int *vert_num_map, __global int *vert_num_ord, int n_feat, int n1_local, int n2, double paramy)
 {
     int idx1 = get_global_id(0);
     int idx2 = get_global_id(1);
@@ -181,7 +187,8 @@ __kernel void vertex_gauss_multiplim_3(__global double *vert_gaussian, __global 
 if(idx1 < n1_local && idx2 < n2){
 
     // do the vertext number mapping
-    int v1=vert_num_map[idx1]-1;
+    // find the real vertex number for g1
+    int v1=vert_num_ord[idx1];
     int v2=idx2;
 
     int g1_offset=v1*n_feat;
@@ -197,7 +204,7 @@ if(idx1 < n1_local && idx2 < n2){
     return;
 }
 
-__kernel void edge_kernel_multipim_3(__global double *edge_kernel, __global double *vertex_kernel, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, __global int *vert_num_map, int n_edge1, int n_edge2, int n_node1, int n_node2, double paramx, int start_edge, int end_edge, int own_num_edge)
+__kernel void edge_kernel_multipim_3(__global double *edge_kernel, __global double *vertex_kernel, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, __global int *vert_num_map, __global int *vert_num_ord, int n_edge1, int n_edge2, int n_node1, int n_node2, double paramx, int start_edge, int end_edge, int own_num_edge)
 {
     int i=get_global_id(0);
     int x1,x2,y1,y2;

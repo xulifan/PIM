@@ -14,72 +14,44 @@
 
 int main(int argc, char *argv[])
 {
+    double total_start,total_end;
+    total_start=rtclock();
+
     cout.setf(ios::fixed,ios::floatfield);
     cout.precision(3);
+
     read_input_file(argc,argv);
     
-    double total_start,total_end;
-    double t_start1,t_end1;
+    input_process();
     
-    total_start=rtclock();
-    
-    t_start1=rtclock();
-    for(int i =0;i<num_graph;i++) read_graph(i);
-    for(int i =0;i<num_graph;i++) init_adj_list(i);
+    if(option ==0){
 
-    pack_adj_list();
-    t_end1=rtclock();
-    read_graph_time+=t_end1-t_start1;
-	
-	t_start1=rtclock();
-    
-    for(int i =0;i<num_graph;i++) convert_to_sp(i);
-    t_end1=rtclock();
-	convert_kernel_time+=t_end1-t_start1;
+        OpenCL_init();
+        // GPU implemetation of SPGK
+        SPGK_GPU();
+        cl_clean_up();
+    }
+    else if(option ==1){
 
-	t_start1=rtclock();
-    for(int i =0;i<num_graph;i++) count_sp_edge(i);
-    for(int i =0;i<num_graph;i++) init_edge(i);
-    pack_sp_edge();
-    t_end1=rtclock();
-	edge_init_time+=t_end1-t_start1;	
-    
-    init_graph_info();
-
-    cout<<"min_node max_node avg_node min_edge max_edge avg_edge min_sp max_sp avg_sp:"<<endl;
-    cout<<min_node<<" "<<max_node<<" "<<total_node/num_graph<<" "<<min_edge<<" "<<max_edge<<" "<<total_edge/num_graph<<" "<<min_sp<<" "<<max_sp<<" "<<total_sp/num_graph<<endl;
-    
-if(option ==0){
-    OpenCL_init();
-
-    SPGK_GPU();
-    cout<<"GPU total time: "<<gpu3_total_time<<endl;
-    cout<<"all kernel time: "<<vertex_kernel_time+edge_kernel_time+reduce_time<<endl;
-    cout<<"mem copy   time: "<<mem_init_time<<endl;
-    cout<<"reduc copy time: "<<gpu_sum_mem_cpy_time<<endl;
-    cout<<"reduc sum  time: "<<gpu_sum_time<<endl;
-    cout<<"vertex     time: "<<vertex_kernel_time<<endl;
-    cout<<"edge       time: "<<edge_kernel_time<<endl;
-    cout<<"reduce     time: "<<reduce_time<<endl;
-
-    cl_clean_up();
-}
-else if(option ==1){
-    SPGK_PIM();
-}
-else if(option ==2){
-    SPGK_mult_PIM();
-}
-else if(option ==3){
-    SPGK_mult_PIM_one_pair_1();
-}
-else if(option ==4){
-    SPGK_mult_PIM_one_pair_2();
-}
-else if(option ==5){
-    SPGK_mult_PIM_one_pair_3();
-}
-
+        // use only one PIM and only process one pair of graphs
+        SPGK_PIM();
+    }
+    else if(option ==2){
+        // use multiple PIMs in parallel, each PIM can process one pair of graphs
+        SPGK_mult_PIM();
+    }
+    else if(option ==3){
+        // use multiple PIMs on one pair of graphs (scheme 1)
+        SPGK_mult_PIM_one_pair_1();
+    }
+    else if(option ==4){
+        // use multiple PIMs on one pair of graphs (scheme 2)
+        SPGK_mult_PIM_one_pair_2();
+    }
+    else if(option ==5){
+        // use multiple PIMS on one pair of graphs (scheme 3)
+        SPGK_mult_PIM_one_pair_3();
+    }
 
     total_end=rtclock();
 
