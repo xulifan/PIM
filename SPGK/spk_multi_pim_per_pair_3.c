@@ -134,7 +134,7 @@ void SPGK_mult_PIM_one_pair_3()
         n_edge2=graph[g2].n_sp_edge;
 
         int edges_per_gpu=(n_edge1+num_gpus-1)/num_gpus;
-        printf("Each GPU is calculating %d paris of edges for graph %d and graph %d\n",edges_per_gpu,g1,g2);
+        
     
         cl_event *complete_vert=(cl_event *)calloc(num_gpus,sizeof(cl_event));
         cl_event *complete_edge=(cl_event *)calloc(num_gpus,sizeof(cl_event));
@@ -148,6 +148,7 @@ void SPGK_mult_PIM_one_pair_3()
             int end_edge= start_edge+edges_per_gpu;
             if(end_edge>n_edge1) end_edge=n_edge1;
             int own_num_edges = end_edge-start_edge;
+            printf("GPU %d is calculating %d paris of edges for graph %d and graph %d\n",cur_gpu,own_num_edges,g1,g2);
 
             pim_feat_g1[cur_gpu] = pim_malloc(sizeof(double) * n_node1*n_feat, target_gpu[cur_gpu], PIM_MEM_PIM_READ | PIM_MEM_HOST_WRITE, PIM_PLATFORM_OPENCL_GPU);
             pim_edge_w1[cur_gpu] = pim_malloc(sizeof(double) * n_edge1, target_gpu[cur_gpu], PIM_MEM_PIM_READ | PIM_MEM_HOST_WRITE, PIM_PLATFORM_OPENCL_GPU);
@@ -332,6 +333,17 @@ void SPGK_mult_PIM_one_pair_3()
 
 
 // each GPU calculates the needed vertex similarities and store them in vert[]][]
+// vert_num_ord is used to store the vertex numbers in order
+// size of vert_num_ord is set to be no. of nodes in g1 for all PIMs for now
+//    for example: if G1 has 5 nodes and G2 has n nodes
+//                 GPU1 has 0->1, 0->2
+//                 GPU2 has 0->3, 0->4 0->5;
+//                 vert_num_ord for GPU1 is:
+//                   index: 0 1 2 3 4 5
+//                   value: 0 1 2 0 0 0
+//                 vert_num_ord for GPU2 is:
+//                   index: 0 1 2 3 4 5
+//                   value: 0 3 4 5 0 0
 // vert_num_map is used to store the vertex number mapping:
 //    for example: if G1 has 5 nodes and G2 has n nodes
 //                 GPU1 has 0->1, 0->2

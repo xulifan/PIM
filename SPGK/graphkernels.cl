@@ -177,6 +177,14 @@ if(i<own_num_edge){
     return;
 }
 
+// vert_num_ord stores the n1_local vertices in order
+// vert_num_map stores the vertices index in vert_num_ord
+// for example:
+//      vert_num_ord: 0 4 5 0 0
+//          means there are 3 vertics: v0, v4, v5
+//      vert_num_map: 1 0 0 0 2 3
+//          means v0 is the first element in vert_num_ord
+//                v4 is the second, v5 is the third
 
 __kernel void vertex_gauss_multiplim_3(__global double *vert_gaussian, __global double *feat_g1, __global double *feat_g2, __global int *vert_num_map, __global int *vert_num_ord, int n_feat, int n1_local, int n2, double paramy)
 {
@@ -204,6 +212,10 @@ if(idx1 < n1_local && idx2 < n2){
     return;
 }
 
+
+// each GPU gets some number of edges from G1 to compare with all edges in G2
+// compute similarities for edges numbering from start_edge to end_edge
+// during the computation, an vertex number mapping is needed to find the correct vertex similarity stored in vert[][]
 __kernel void edge_kernel_multipim_3(__global double *edge_kernel, __global double *vertex_kernel, __global double *edge_g1, __global double *edge_g2, __global int *edge_x1, __global int * edge_x2, __global int *edge_y1, __global int *edge_y2, __global int *vert_num_map, __global int *vert_num_ord, int n_edge1, int n_edge2, int n_node1, int n_node2, double paramx, int start_edge, int end_edge, int own_num_edge)
 {
     int i=get_global_id(0);

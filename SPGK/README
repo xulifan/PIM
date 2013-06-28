@@ -1,0 +1,75 @@
+==========================
+Shortest Path Graph Kernel
+==========================
+Given two input graphs, convert them to all pair shortest path graphs.
+then compare all the edges in the two graphs.
+
+The computation is divided into three kernels:
+1. vertex kernel: compute similarities between vertices
+2. edge kernel: compute similarities between edges based on edge length and the computed vertex similarity
+3. reduction kernel: sum up the edge similarities
+
+
+
+====================================================
+Shortest Path Graph Kernel implementations using PIM
+====================================================
+This program uses shortest path graph kernel to calculate the kernel matrix for n input graphs.
+Each entry in the kernel matrix represents similarity between one pair of graphs. Note that the 
+kernel matrix is symmetric( similarity between g1 and g2 is the same as similarity between g2 and g1),
+the total number of pair comparisons for n graphs is ((n*n-n)/2)+n
+
+First, we implement the SPGK on one pair of graphs using only one PIM. That is, ignore all the other PIMs,
+only use the first GPU that is available, and do the whole computation on it.
+After that, we implement a version uses multiple PIMs. The host issues three kernel spawns to each
+PIM on different pair of graphs. Then the host collects results from each PIM and goes to the next m pairs
+of graphs (m is number of PIMs)
+
+If the two input graph G1 and G2 are really large, then we need multiple PIMs work together on this single pair of graphs.
+To use multiple PIMs on one single pair of graphs, we tried three different schemes for domain decomposition:
+1. Remove the precalculation of vertex kernel. Each PIM takes some certain amount of edges from G1, and compare
+    all edges in G2. The vertex similarities are computed whenever needed during the edge comparison. This may result in
+    redundant computation of vertex similarity.
+2. Each PIM performs a vertex kernel on all vertices and store the vertex similarities in PIM memory. This computation is
+    exactly the same for all PIMs. Then each PIM takes some certain amount of edges from G1, and compare
+    all edges in G2. When vertex similarity is needed, just fetch it the PIM memory instead calculate it in scheme 1.
+3. Each PIM figure out its own set of edges and vertices first. Then perform a vertex kernel on its own vertices only.
+    Then move to edge kernel and fetch needed vertex similarity in PIM memory.
+
+Drawback for three different schemes:
+1. If two edges share one vertex, then each edge needs to perform one vertex similarity calculation on this vertex. So this
+    scheme introduces potential redundant computation depends on the degree of vertices(number of neighbors). Also, the vertex
+    similarity computation is random memory access, not GPU friendly.
+2. Replicated computation of vertex kernel across all PIMs. However, this scheme provides coalesced memory access and the edge
+    kernel can take advantage of vertex similarities stored in PIM memory.
+3. This scheme introduces some overhead in initialization. But it uses less memory and it is computation friendly.
+
+
+
+=======================
+How to use this program
+=======================
+To compile the program:
+    >make
+
+So far, the program has five different implementations to choose:
+    option 0: OpenCL implementation on GPU
+    option 1: using one single PIM only on one pair of graphs
+    option 2: using multiple PIMs, each PIM process one pair of graphs
+    option 3: using multiple PIMs on one single pair of graphs(scheme 1)
+        In this scheme, each PIM figures out its set of edges first
+        In this scheme, the pre-calculation of vertex kernel is removed
+        during the edge kernel computation, the vertex similarities are calculated when needed
+    option 4: using multiple PIMs on one single pair of graphs(scheme 2)
+        In this scheme, each PIM figures out its set of edges first
+        Then each PIM performs an exactly same vertex kernel computation on all vertices
+        during the edge kernel computation, the needed vertex similarities are fetched in PIM memory
+    option5: using multiple PIMs on one single pair of graphs(scheme 3)
+        In this scheme, each PIM figures out its set of edges first
+        Then each PIM figures out its set of vertices
+        Then each PIM perform vertex kernel on its own set of vertices instead of the all vertices
+        Then each PIM perform edge kernel on its own set of edges
+
+To run the program using option 0 you can simply:
+    >make run0
+the run0 can be replaced with run1 to run5 depends on the option
