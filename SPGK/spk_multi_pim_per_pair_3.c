@@ -192,7 +192,12 @@ void SPGK_mult_PIM_one_pair_3()
             pim_unmap(pim_mapped_edge_x2[cur_gpu]);
             pim_unmap(pim_mapped_edge_y2[cur_gpu]);
 
+
+            // initializ vert_num_map and vert_num_ord array
+            // vert_num_ord stores the vertex number in order.
+            // vert_num_map stores the position in vert_num_ord for each vertex
             vert_num_map[cur_gpu]=(int *)calloc(n_node1,sizeof(int));
+            // the size should be n_vert_local[cur_gpu], but n_node1 is working OK with extra 0s
             vert_num_ord[cur_gpu]=(int *)calloc(n_node1,sizeof(int));
             int count=1;
             for(int i=start_edge;i<end_edge;i++){
@@ -229,14 +234,17 @@ void SPGK_mult_PIM_one_pair_3()
             pim_vertex[cur_gpu] = pim_malloc(sizeof(double) *n_node1_local*n_node2, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
             pim_edge[cur_gpu] = pim_malloc(sizeof(double) *own_num_edges, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
         
+            // launch vertex kernel
             pim_launch_vert_gauss_multiplim_3(pim_vertex[cur_gpu],pim_feat_g1[cur_gpu],pim_feat_g2[cur_gpu],pim_vert_num_map[cur_gpu],pim_vert_num_ord[cur_gpu],n_node1_local,n_node2,n_feat,paramy,target_gpu[cur_gpu], &complete_vert[cur_gpu]);
+
+            // launch edge kernel
             pim_launch_edge_kernel_multipim_3(pim_edge[cur_gpu], pim_vertex[cur_gpu], pim_edge_w1[cur_gpu], pim_edge_w2[cur_gpu], pim_edge_x1[cur_gpu], pim_edge_x2[cur_gpu], pim_edge_y1[cur_gpu], pim_edge_y2[cur_gpu], pim_vert_num_map[cur_gpu], pim_vert_num_ord[cur_gpu], n_edge1, n_edge2, n_node1, n_node2, paramx, start_edge, end_edge, own_num_edges, target_gpu[cur_gpu], &complete_edge[cur_gpu]);
             
             int num=own_num_edges;
-            
             outputsize[cur_gpu]=(num%BLOCK_SIZE_1D==0)?num/BLOCK_SIZE_1D:(( num/BLOCK_SIZE_1D )+ 1);
             pim_reduce_output[cur_gpu] = pim_malloc(sizeof(double)*outputsize[cur_gpu], target_gpu[cur_gpu], PIM_MEM_PIM_WRITE | PIM_MEM_HOST_READ,PIM_PLATFORM_OPENCL_GPU);
 
+            // launch reduction kernel
             pim_launch_reduce_kernel(pim_edge[cur_gpu], pim_reduce_output[cur_gpu], num, target_gpu[cur_gpu], &complete_reduce[cur_gpu]);
 
             free(vert_num_map[cur_gpu]);

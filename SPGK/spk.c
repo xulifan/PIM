@@ -1,6 +1,5 @@
 
 #include "spk.h"
-
 #include "read_input.c"
 #include "malloc.c"
 #include "utility.c"

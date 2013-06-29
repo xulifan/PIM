@@ -63,6 +63,7 @@ void SPGK_PIM()
         }
     }
     
+
     // **** PIM emulation Start Mark  *********
     pim_emu_begin();
 
@@ -248,6 +249,8 @@ void SPGK_mult_PIM()
     pim_mapped_reduce_output=(double **)malloc(sizeof(double *)*num_gpus);
 
     outputsize=(int *)malloc(sizeof(int)*num_gpus);  
+
+
     // **** PIM emulation Start Mark  *********
     pim_emu_begin();
 
@@ -319,7 +322,8 @@ void SPGK_mult_PIM()
 
             if(n_edge1>n_edge2) pim_edge[j] = pim_malloc(sizeof(double) *n_edge1, target_gpu[j], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
 	        else pim_edge[j] = pim_malloc(sizeof(double) *n_edge2, target_gpu[j], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
-	                
+
+            // launch vertex kernel and edge kernel	                
             if(n_edge1>=n_edge2){
                 pim_launch_vert_gauss_kernel(pim_vertex[j],pim_feat_g1[j],pim_feat_g2[j],n_node1,n_node2,n_feat,paramy,target_gpu[j], &complete_vert[j]);
                 pim_launch_edge_kernel(pim_edge[j], pim_vertex[j], pim_edge_w1[j], pim_edge_w2[j], pim_edge_x1[j], pim_edge_x2[j], pim_edge_y1[j], pim_edge_y2[j], n_edge1, n_edge2, n_node1, n_node2, paramx, target_gpu[j], &complete_edge[j]);
@@ -337,6 +341,7 @@ void SPGK_mult_PIM()
             outputsize[j]=(num%BLOCK_SIZE_1D==0)?num/BLOCK_SIZE_1D:(( num/BLOCK_SIZE_1D )+ 1);
             pim_reduce_output[j] = pim_malloc(sizeof(double)*outputsize[j], target_gpu[j], PIM_MEM_PIM_WRITE | PIM_MEM_HOST_READ,PIM_PLATFORM_OPENCL_GPU);
 
+            // launch reduction kernel
             pim_launch_reduce_kernel(pim_edge[j], pim_reduce_output[j], num, target_gpu[j], &complete_reduce[j]);
         }
 
@@ -450,7 +455,8 @@ double pim_launch_SPGK(int g1, int g2, void *pim_feat_g1, void *pim_edge_w1, voi
 
     if(n_edge1>n_edge2) pim_edge = pim_malloc(sizeof(double) *n_edge1, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
 	else pim_edge = pim_malloc(sizeof(double) *n_edge2, target_gpu, PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
-	        
+	
+    // launch vertex kernel and edge kernel        
     if(n_edge1>=n_edge2){
         pim_launch_vert_gauss_kernel(pim_vertex,pim_feat_g1,pim_feat_g2,n_node1,n_node2,n_feat,paramy,target_gpu, &complete_vert);
         // wait for PIM gpus to finish
@@ -480,6 +486,7 @@ double pim_launch_SPGK(int g1, int g2, void *pim_feat_g1, void *pim_edge_w1, voi
     int outputsize=(num%BLOCK_SIZE_1D==0)?num/BLOCK_SIZE_1D:(( num/BLOCK_SIZE_1D )+ 1);
     void *pim_reduce_output = pim_malloc(sizeof(double)*outputsize, target_gpu, PIM_MEM_PIM_WRITE | PIM_MEM_HOST_READ,PIM_PLATFORM_OPENCL_GPU);
 
+    // launch reduction kernel
     pim_launch_reduce_kernel(pim_edge, pim_reduce_output, num, target_gpu, &complete_reduce);
     // wait for PIM gpus to finish
     clerr = clWaitForEvents(1, &complete_reduce) ;

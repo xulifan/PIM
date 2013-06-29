@@ -96,9 +96,9 @@ void SPGK_mult_PIM_one_pair_1()
     pim_mapped_reduce_output=(double **)malloc(sizeof(double *)*num_gpus);
 
     outputsize=(int *)malloc(sizeof(int)*num_gpus);  
+
+
     // **** PIM emulation Start Mark  *********
-
-
     pim_emu_begin();
     
     for(int g1_tmp=0;g1_tmp<num_graph;g1_tmp++){
@@ -176,6 +176,7 @@ void SPGK_mult_PIM_one_pair_1()
 
             pim_edge[cur_gpu] = pim_malloc(sizeof(double) *own_num_edges, target_gpu[cur_gpu], PIM_MEM_PIM_RW, PIM_PLATFORM_OPENCL_GPU);
         
+            // launch edge kernel
             pim_launch_edge_kernel_multipim_1(pim_edge[cur_gpu], pim_feat_g1[cur_gpu], pim_feat_g2[cur_gpu], pim_edge_w1[cur_gpu], pim_edge_w2[cur_gpu], pim_edge_x1[cur_gpu], pim_edge_x2[cur_gpu], pim_edge_y1[cur_gpu], pim_edge_y2[cur_gpu], n_edge1, n_edge2, n_node1, n_node2, n_feat, paramx, paramy, start_edge, end_edge, own_num_edges, target_gpu[cur_gpu], &complete_edge[cur_gpu]);
 
             int num=own_num_edges;
@@ -183,6 +184,7 @@ void SPGK_mult_PIM_one_pair_1()
             outputsize[cur_gpu]=(num%BLOCK_SIZE_1D==0)?num/BLOCK_SIZE_1D:(( num/BLOCK_SIZE_1D )+ 1);
             pim_reduce_output[cur_gpu] = pim_malloc(sizeof(double)*outputsize[cur_gpu], target_gpu[cur_gpu], PIM_MEM_PIM_WRITE | PIM_MEM_HOST_READ,PIM_PLATFORM_OPENCL_GPU);
 
+            // launch reduction kernel
             pim_launch_reduce_kernel(pim_edge[cur_gpu], pim_reduce_output[cur_gpu], num, target_gpu[cur_gpu], &complete_reduce[cur_gpu]);
         }
 
