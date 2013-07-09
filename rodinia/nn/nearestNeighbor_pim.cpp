@@ -107,6 +107,7 @@ float *FindNearestNeighbors_pim(
 
         pim_unmap(pim_mapped_locations[cur_gpu]);
 
+        // launch the PIM kernel
         pim_launch_nn_kernel(pim_locations[cur_gpu], pim_distances[cur_gpu], own_num_points[cur_gpu], lat, lng, target_gpu[cur_gpu], &complete_event[cur_gpu]);
 
     }
@@ -125,6 +126,7 @@ float *FindNearestNeighbors_pim(
     float *distances = (float *)malloc(sizeof(float) * numRecords);
 
     
+    // collect resutls from PIMs
     for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){  
         pim_mapped_distances[cur_gpu] = (float *)pim_map(pim_distances[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
 
@@ -158,6 +160,10 @@ float *FindNearestNeighbors_pim(
 
 
 #define BLOCK_SIZE_1D 256
+// launch the PIM kernel for nearest neighbors
+// locations stores the coordinates for numRecords points
+// The kernel calculates the distances for all points in locations from a certain point with coordinate (lat,lng)
+// the distances are stored in the array distances[]
 void pim_launch_nn_kernel(void *locations, void *distances, int numRecords, float lat, float lng, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"nearestNeighbor_kernel.cl";

@@ -1,24 +1,25 @@
 DeviceID, ThreadID, FunctionName, StartTime_ns, EndTime_ns
-ehp-cpu0, 4556, NA, 0, 1098780
-ehp-cpu0, 4556, NA, 1098780, 2632995
-ehp-cpu0, 4556, NA, 2632995, 2706346
-ehp-cpu0, 4556, NA, 2706346, 2781341
-ehp-cpu0, 4556, NA, 2781341, 3263181
-ehp-cpu0, 4556, NA, 3263181, 4581927
-ehp-cpu0, 4556, NA, 4581927, 4606462
-ehp-cpu0, 4556, NA, 4606462, 4631262
-ehp-cpu0, 4556, NA, 4631262, 5113333
-ehp-cpu0, 4556, NA, 5113333, 6460727
-ehp-cpu0, 4556, NA, 6460727, 6513778
-ehp-cpu0, 4556, NA, 6513778, 6510029
-ehp-cpu0, 4556, NA, 6829979, 7609190
-ehp-cpu0, 4556, NA, 7609190, 8875668
-ehp-cpu0, 4556, NA, 8875668, 9569331
-ehp-cpu0, 4556, NA, 9569331, 9862733
-ehp-cpu0, 4556, NA, 9862733, 10499661
-ehp-cpu0, 4556, NA, 10499661, 10892217
+ehp-cpu0, 4085, NA, 0, 756717
+ehp-cpu0, 4085, NA, 756717, 2119956
+ehp-cpu0, 4085, NA, 2119956, 2193307
+ehp-cpu0, 4085, NA, 2193307, 2268346
+ehp-cpu0, 4085, NA, 2268346, 2721658
+ehp-cpu0, 4085, NA, 2721658, 4183448
+ehp-cpu0, 4085, NA, 4183448, 4207906
+ehp-cpu0, 4085, NA, 4207906, 4232695
+ehp-cpu0, 4085, NA, 4232695, 4855109
+ehp-cpu0, 4085, NA, 4855109, 6116822
+ehp-cpu0, 4085, NA, 6116822, 6141324
+ehp-cpu0, 4085, NA, 6141324, 6166080
+ehp-cpu0, 4085, NA, 6166080, 6651482
+ehp-cpu0, 4085, NA, 6651482, 7459155
+ehp-cpu0, 4085, NA, 7459155, 8583724
+ehp-cpu0, 4085, NA, 8583724, 9220177
+ehp-cpu0, 4085, NA, 9220177, 9512586
+ehp-cpu0, 4085, NA, 9512586, 10120920
+ehp-cpu0, 4085, NA, 10120920, 10540680
 
-ehp-cpu1, 4556, NA, 6513778, 6829979
+ehp-cpu1, NA, NA, NA, NA
 
 ehp-cpu2, NA, NA, NA, NA
 
@@ -30,14 +31,14 @@ pim0-cpu0, NA, NA, NA, NA
 
 pim0-cpu1, NA, NA, NA, NA
 
-pim0-gpu0, 4559, NearestNeighbor, 2707346, 2708838
+pim0-gpu0, 4088, NearestNeighbor, 2194307, 2195799
 
 pim1-cpu0, NA, NA, NA, NA
 
-pim1-gpu0, 4560, NearestNeighbor, 4607462, 4608954
+pim1-gpu0, 4089, NearestNeighbor, 4208906, 4210398
 
 pim2-cpu0, NA, NA, NA, NA
 
-pim2-gpu0, 4561, NearestNeighbor, 6514778, 6516270
+pim2-gpu0, 4090, NearestNeighbor, 6142324, 6143816
 
-Total runtime: 10892217
+Total runtime: 10540680
