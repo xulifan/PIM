@@ -1,0 +1,29 @@
+#ProfileFileVersion=2.6
+#ProfilerVersion=2.6.2153
+#Application=/home/lifxu/Desktop/github/PIM/rodinia_2.3/PIM/kmeans/kmeans
+#ApplicationArgs=-o -i ../../data/kmeans/kdd_cup
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Vendor=Advanced Micro Devices, Inc.
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Name=AMD Accelerated Parallel Processing
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLDriver Version=1124.2 (sse2,avx,fma4)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   NumberAppAddressBits=64
+#Device Tahiti Platform Vendor=Advanced Micro Devices, Inc.
+#Device Tahiti Platform Name=AMD Accelerated Parallel Processing
+#Device Tahiti Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti CLDriver Version=1124.2 (VM)
+#Device Tahiti CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti NumberAppAddressBits=32
+#OS Version=CentOS release 6.4 (Final)
+#DisplayName=
+#ListSeparator=,
+Method, ExecutionOrder, ThreadID, CallIndex, GlobalWorkSize, WorkGroupSize, Time, LocalMemSize, VGPRs, SGPRs, ScratchRegs, FCStacks, Wavefronts, VALUInsts, SALUInsts, VFetchInsts, SFetchInsts, VWriteInsts, LDSInsts, VALUUtilization, VALUBusy, SALUBusy, FetchSize, CacheHit, MemUnitBusy, MemUnitStalled, WriteUnitStalled, LDSBankConflict, WriteSize, GDSInsts
+kmeans_swap__k1_Tahiti1, 1, 4683, 0, { 164864       1       1}, {  256     1     1},        15.16933, 0, 5, 16, 0, NA,      2576.00,       214.84,        38.97,        33.97,         8.00,        33.97,         0.00,        99.96,         1.59,         0.57,    344505.88,         1.66,        99.31,        39.22,         0.00,         0.00,     23659.06,         0.00
+kmeans_swap__k1_Tahiti1, 2, 4684, 0, { 164864       1       1}, {  256     1     1},         1.60504, 0, 5, 16, 0, NA,      2576.00,       214.84,        38.97,        33.97,         8.00,        33.97,         0.00,        99.96,         0.92,         0.33,    344472.94,         1.66,        98.82,        40.09,         0.00,         0.00,     23659.34,         0.00
+kmeans_swap__k1_Tahiti1, 3, 4685, 0, { 164864       1       1}, {  256     1     1},         2.04370, 0, 5, 16, 0, NA,      2576.00,       214.76,        38.96,        33.96,         8.00,        33.96,         0.00,       100.00,         0.94,         0.33,    344209.94,         1.47,        99.21,        39.26,         0.00,         0.00,     21766.19,         0.00
+kmeans_kernel_c__k2_Tahiti1, 4, 4686, 0, { 164864       1       1}, {  256     1     1},         0.52711, 0, 12, 24, 0, NA,      2576.00,      1086.16,       212.84,       339.74,        11.00,         1.00,         0.00,        99.96,        18.32,         7.18,    111055.38,         4.57,        47.81,         0.09,         0.00,         0.00,       539.12,         0.00
+kmeans_kernel_c__k2_Tahiti1, 5, 4687, 0, { 164864       1       1}, {  256     1     1},         0.53126, 0, 12, 24, 0, NA,      2576.00,      1086.16,       212.84,       339.74,        11.00,         1.00,         0.00,        99.96,        18.37,         7.20,    111357.19,         4.59,        47.89,         0.10,         0.00,         0.00,       569.06,         0.00
+kmeans_kernel_c__k2_Tahiti1, 6, 4688, 0, { 164864       1       1}, {  256     1     1},         0.51230, 0, 12, 24, 0, NA,      2576.00,      1085.74,       212.76,       339.60,        11.00,         1.00,         0.00,       100.00,        18.40,         7.21,    109355.50,         0.06,        46.90,         0.07,         0.01,         0.00,       569.81,         0.00
+kmeans_kernel_c__k2_Tahiti1, 7, 4689, 0, { 164864       1       1}, {  256     1     1},         0.53007, 0, 12, 24, 0, NA,      2576.00,      1086.16,       212.84,       339.74,        11.00,         1.00,         0.00,        99.96,        18.38,         7.20,    111077.38,         4.54,        46.85,         0.09,         0.00,         0.00,       556.75,         0.00
+kmeans_kernel_c__k2_Tahiti1, 8, 4690, 0, { 164864       1       1}, {  256     1     1},         0.53363, 0, 12, 24, 0, NA,      2576.00,      1086.16,       212.84,       339.74,        11.00,         1.00,         0.00,        99.96,        18.14,         7.11,    110542.31,         5.07,        47.10,         0.07,         0.08,         0.00,       559.12,         0.00
+kmeans_kernel_c__k2_Tahiti1, 9, 4691, 0, { 164864       1       1}, {  256     1     1},         0.50800, 0, 12, 24, 0, NA,      2576.00,      1085.74,       212.76,       339.60,        11.00,         1.00,         0.00,       100.00,        19.04,         7.46,    109356.38,         0.06,        49.12,         0.10,         0.00,         0.00,       560.00,         0.00

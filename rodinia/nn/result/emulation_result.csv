@@ -1,0 +1,43 @@
+DeviceID, ThreadID, FunctionName, StartTime_ns, EndTime_ns
+ehp-cpu0, 4556, NA, 0, 1098780
+ehp-cpu0, 4556, NA, 1098780, 2632995
+ehp-cpu0, 4556, NA, 2632995, 2706346
+ehp-cpu0, 4556, NA, 2706346, 2781341
+ehp-cpu0, 4556, NA, 2781341, 3263181
+ehp-cpu0, 4556, NA, 3263181, 4581927
+ehp-cpu0, 4556, NA, 4581927, 4606462
+ehp-cpu0, 4556, NA, 4606462, 4631262
+ehp-cpu0, 4556, NA, 4631262, 5113333
+ehp-cpu0, 4556, NA, 5113333, 6460727
+ehp-cpu0, 4556, NA, 6460727, 6513778
+ehp-cpu0, 4556, NA, 6513778, 6510029
+ehp-cpu0, 4556, NA, 6829979, 7609190
+ehp-cpu0, 4556, NA, 7609190, 8875668
+ehp-cpu0, 4556, NA, 8875668, 9569331
+ehp-cpu0, 4556, NA, 9569331, 9862733
+ehp-cpu0, 4556, NA, 9862733, 10499661
+ehp-cpu0, 4556, NA, 10499661, 10892217
+
+ehp-cpu1, 4556, NA, 6513778, 6829979
+
+ehp-cpu2, NA, NA, NA, NA
+
+ehp-cpu3, NA, NA, NA, NA
+
+ehp-gpu0, NA, NA, NA, NA
+
+pim0-cpu0, NA, NA, NA, NA
+
+pim0-cpu1, NA, NA, NA, NA
+
+pim0-gpu0, 4559, NearestNeighbor, 2707346, 2708838
+
+pim1-cpu0, NA, NA, NA, NA
+
+pim1-gpu0, 4560, NearestNeighbor, 4607462, 4608954
+
+pim2-cpu0, NA, NA, NA, NA
+
+pim2-gpu0, 4561, NearestNeighbor, 6514778, 6516270
+
+Total runtime: 10892217
