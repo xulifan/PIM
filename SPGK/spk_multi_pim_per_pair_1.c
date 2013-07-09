@@ -256,6 +256,7 @@ void SPGK_mult_PIM_one_pair_1()
 
     free(outputsize);
 
+    free(target_gpu);
     free(list_of_pims);
     free(gpus_per_pim);
     free(cpus_per_pim);

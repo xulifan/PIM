@@ -333,6 +333,7 @@ void SPGK_mult_PIM_one_pair_3()
     free(pim_mapped_vert_num_map);
     free(pim_mapped_vert_num_ord);
 
+    free(target_gpu);
     free(list_of_pims);
     free(gpus_per_pim);
     free(cpus_per_pim);
