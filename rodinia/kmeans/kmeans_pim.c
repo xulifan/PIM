@@ -1,5 +1,5 @@
 #define BLOCK_SIZE_1D 256
-
+// PIM launch for the matrix transpose kernel
 void pim_launch_swap_kernel(void *input, void *input_swap, int npoints, int nfeatures, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"kmeans.cl";
@@ -52,7 +52,7 @@ void pim_launch_swap_kernel(void *input, void *input_swap, int npoints, int nfea
 
 }
 
-
+// PIM launch for the kmeans kernel
 void pim_launch_kmeans_kernel(void *feature_swap, void *cluster, void *membership, int npoints, int nclusters, int nfeatures, int offset, int size, pim_device_id target, cl_event *complete)
 {
     char * source_nm = (char *)"kmeans.cl";

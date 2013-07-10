@@ -107,7 +107,7 @@ int cluster_pim(int      npoints,				/* number of data points */
     {
         if (nclusters > npoints) break;	/* cannot have more clusters than points */
 
-        
+        // allocate for each PIM
         pim_feature=(void **)malloc(sizeof(void *)*num_gpus);
         pim_feature_swap=(void **)malloc(sizeof(void *)*num_gpus);
         pim_cluster=(void **)malloc(sizeof(void *)*num_gpus);
@@ -139,26 +139,28 @@ int cluster_pim(int      npoints,				/* number of data points */
 
             pim_unmap(pim_mapped_feature[cur_gpu]);
 
+            /* launch the matrix transpose kernel */
             pim_launch_swap_kernel(pim_feature[cur_gpu], pim_feature_swap[cur_gpu], own_num_points[cur_gpu], nfeatures, target_gpu[cur_gpu], &complete_event[cur_gpu]);
 
         }
+
+        
         
         for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){  
             // wait for PIM gpus to finish
             cl_int clerr;
             clerr = clWaitForEvents(1, &complete_event[cur_gpu]) ;
             ASSERT_CL_RETURN(clerr);
-            
+ 
         }
-
+        
         float **clusters;
         int *initial;
         
         for(int cur_loop=0;cur_loop<nloops;cur_loop++){
             clusters    = (float**) malloc(nclusters *             sizeof(float*));
             clusters[0] = (float*)  malloc(nclusters * nfeatures * sizeof(float));
-            for (int i=1; i<nclusters; i++)
-                clusters[i] = clusters[i-1] + nfeatures;
+            for (int i=1; i<nclusters; i++) clusters[i] = clusters[i-1] + nfeatures;
 
 	        /* initialize the random clusters */
 	        initial = (int *) malloc (npoints * sizeof(int));
@@ -232,6 +234,7 @@ int cluster_pim(int      npoints,				/* number of data points */
                 }
                 
                 for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
+                    // copy membership information to host and collect misclassification
                     pim_mapped_membership[cur_gpu] = (int *)pim_map(pim_membership[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
                     
                     int mis_classify = 0;
@@ -249,10 +252,11 @@ int cluster_pim(int      npoints,				/* number of data points */
 			                new_centers[cluster_id][j] += features[start_point[cur_gpu]+i][j];
 		                }
 	                }
+                    pim_unmap(pim_mapped_membership[cur_gpu]);
                     delta+=(float) mis_classify;
                 }
 
-
+                
 		        /* replace old cluster centers with new_centers */
 		        /* CPU side of reduction */
 		        for (int i=0; i<nclusters; i++) {
@@ -263,7 +267,19 @@ int cluster_pim(int      npoints,				/* number of data points */
 			        }
 			        new_centers_len[i] = 0;			/* set back to 0 */
 		        }	 
+
+                for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
+
+                    /* update cluster features in PIM */
+                    pim_mapped_cluster[cur_gpu] = (float *)pim_map(pim_cluster[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
+
+                    memcpy(pim_mapped_cluster[cur_gpu],clusters[0],sizeof(float)*nclusters*nfeatures);
+
+                    pim_unmap(pim_mapped_cluster[cur_gpu]);
+
+                }
 		        c++;
+                printf("loop %d error %f\n",c,delta);
             } while ((delta > threshold) && (loop++ < 500));	/* makes sure loop terminates */
 	        printf("iterated %d times\n", c);
             
@@ -272,7 +288,7 @@ int cluster_pim(int      npoints,				/* number of data points */
 				free(*cluster_centres);
 			}
             *cluster_centres = clusters;
-
+            
             if(isRMSE)
 			{
 				rmse = rms_err(features,
@@ -289,9 +305,31 @@ int cluster_pim(int      npoints,				/* number of data points */
 				}
 			} 
 
-            deallocateMemory();	
+            
 
+            free(new_centers_len);
+            free(new_centers[0]);
+            free(new_centers);           
+            free(initial);
         }
+
+        for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
+            pim_free(pim_feature[cur_gpu]);
+            pim_free(pim_feature_swap[cur_gpu]);
+            pim_free(pim_cluster[cur_gpu]);
+            pim_free(pim_membership[cur_gpu]);
+        }
+
+        free(pim_feature);
+        free(pim_feature_swap);
+        free(pim_cluster);
+        free(pim_membership);
+
+        free(pim_mapped_feature);
+        free(pim_mapped_feature_swap);
+        free(pim_mapped_cluster);
+        free(pim_mapped_membership);
+
             	
 	}
 
@@ -299,6 +337,12 @@ int cluster_pim(int      npoints,				/* number of data points */
 
     // **** PIM emulation End Mark  *********  
     pim_emu_end();
+
+    free(target_gpu);    
+    free(list_of_pims);
+    free(gpus_per_pim);
+    free(cpus_per_pim);
+
 
     return index;
 }
