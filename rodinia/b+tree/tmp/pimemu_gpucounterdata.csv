@@ -1,0 +1,22 @@
+#ProfileFileVersion=2.6
+#ProfilerVersion=2.6.2153
+#Application=/home/lifxu/Desktop/github/PIM/rodinia/b+tree/b+tree.out
+#ApplicationArgs=file /home/lifxu/Desktop/Benchmarks/rodinia_2.3/data/b+tree/mil.txt command /home/lifxu/Desktop/Benchmarks/rodinia_2.3/data/b+tree/command.txt
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Vendor=Advanced Micro Devices, Inc.
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Name=AMD Accelerated Parallel Processing
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLDriver Version=1124.2 (sse2,avx,fma4)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   NumberAppAddressBits=64
+#Device Tahiti Platform Vendor=Advanced Micro Devices, Inc.
+#Device Tahiti Platform Name=AMD Accelerated Parallel Processing
+#Device Tahiti Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti CLDriver Version=1124.2 (VM)
+#Device Tahiti CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti NumberAppAddressBits=32
+#OS Version=CentOS release 6.4 (Final)
+#DisplayName=
+#ListSeparator=,
+Method, ExecutionOrder, ThreadID, CallIndex, GlobalWorkSize, WorkGroupSize, Time, LocalMemSize, VGPRs, SGPRs, ScratchRegs, FCStacks, Wavefronts, VALUInsts, SALUInsts, VFetchInsts, SFetchInsts, VWriteInsts, LDSInsts, VALUUtilization, VALUBusy, SALUBusy, FetchSize, CacheHit, MemUnitBusy, MemUnitStalled, WriteUnitStalled, LDSBankConflict, WriteSize, GDSInsts
+findK__k1_Tahiti1, 1, 31329, 53, {2560000       1       1}, {  256     1     1},         1.14000, 0, 13, 30, 0, NA,     40000.00,        40.75,        24.12,         9.62,        13.50,         1.25,         0.00,        81.23,        12.67,        10.58,     21991.00,        47.53,        44.64,         1.06,         0.00,         0.00,       191.50,         0.00
+findRangeK__k2_Tahiti1, 2, 31329, 106, {1536000       1       1}, {  256     1     1},         1.09467, 0, 14, 42, 0, NA,     24000.00,        61.01,        41.76,        18.01,        20.25,         2.50,         0.00,        84.50,        11.21,        10.88,     24691.50,        44.28,        44.80,         1.21,         0.00,         0.00,       233.22,         0.00
