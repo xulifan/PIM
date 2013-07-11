@@ -29,7 +29,6 @@ float *FindNearestNeighbors_pim(
     printf("Number of CPUs: %d\n",num_cpus);
     //for(i=0;i<num_threads;i++) printf("%d\n",list_of_pims[i]);
     pim_property(num_pims, gpus_per_pim, cpus_per_pim, list_of_pims);
-
     
     // only use one GPU, get its id
     target_gpu=(pim_device_id*)malloc(num_gpus*sizeof(pim_device_id));
@@ -47,9 +46,8 @@ float *FindNearestNeighbors_pim(
         }
     }
 
-/******************** PIM initialization end ************************/
 /********************************************************************/
-
+/********************************************************************/
 
     int points_per_gpu=(numRecords+num_gpus-1)/num_gpus;
     cl_event *complete_event=(cl_event *)calloc(num_gpus,sizeof(cl_event));
@@ -67,49 +65,70 @@ float *FindNearestNeighbors_pim(
     LatLong **pim_mapped_locations;
     float **pim_mapped_distances;
 
-
-/******************** PIM memory variable end ***********************/
 /********************************************************************/
-
+/********************************************************************/
 
 // **** PIM emulation Start Mark  *********
     pim_emu_begin();
 
-
-
 /********************************************************************/
 /******************** PIM meory allocate ****************************/
+
     pim_locations=(void **)malloc(sizeof(void *)*num_gpus);
     pim_distances=(void **)malloc(sizeof(void *)*num_gpus);
 
     pim_mapped_locations=(LatLong **)malloc(sizeof(LatLong *)*num_gpus);
     pim_mapped_distances=(float **)malloc(sizeof(float *)*num_gpus);
 
-/******************** PIM memory variable allocate end **************/
+/********************************************************************/
 /********************************************************************/
 
-    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
 
+/********************************************************************/
+/****************** Domain Decomposition ****************************/
+
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
         start_point[cur_gpu]= cur_gpu*points_per_gpu;
         end_point[cur_gpu]= start_point[cur_gpu]+points_per_gpu;
         if(end_point[cur_gpu]>numRecords) end_point[cur_gpu]=numRecords;
         own_num_points[cur_gpu] = end_point[cur_gpu]-start_point[cur_gpu];
         printf("GPU %d is calculating %d records from %d to %d\n",cur_gpu,own_num_points[cur_gpu],start_point[cur_gpu],end_point[cur_gpu]);
+    }
 
-        /* allocate memory for PIM */
+/********************************************************************/
+/********************************************************************/
+
+/********************************************************************/
+/****************** Allocate Memory on each PIM *********************/
+
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
         pim_locations[cur_gpu] = pim_malloc(sizeof(LatLong) * own_num_points[cur_gpu], target_gpu[cur_gpu], PIM_MEM_PIM_READ | PIM_MEM_HOST_WRITE, PIM_PLATFORM_OPENCL_GPU);
         pim_distances[cur_gpu] = pim_malloc(sizeof(float) * own_num_points[cur_gpu], target_gpu[cur_gpu], PIM_MEM_PIM_WRITE | PIM_MEM_HOST_RW, PIM_PLATFORM_OPENCL_GPU);
+    }
 
+/********************************************************************/
+/********************************************************************/
+
+/********************************************************************/
+/****************** Copy Memory to each PIM *************************/
+
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
         /* copy features of points to PIM */
         pim_mapped_locations[cur_gpu] = (LatLong *)pim_map(pim_locations[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
-
         memcpy(pim_mapped_locations[cur_gpu],&locations[start_point[cur_gpu]],sizeof(LatLong) *own_num_points[cur_gpu]);
-
         pim_unmap(pim_mapped_locations[cur_gpu]);
+    }
+
+/********************************************************************/
+/********************************************************************/
+
+/********************************************************************/
+/****************** Launch kernels on each PIM **********************/
+
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
 
         // launch the PIM kernel
         pim_launch_nn_kernel(pim_locations[cur_gpu], pim_distances[cur_gpu], own_num_points[cur_gpu], lat, lng, target_gpu[cur_gpu], &complete_event[cur_gpu]);
-
     }
 
     
@@ -121,19 +140,28 @@ float *FindNearestNeighbors_pim(
             
     }
 
+/********************************************************************/
+/********************************************************************/
 
     // create distances std::vector
     float *distances = (float *)malloc(sizeof(float) * numRecords);
 
-    
-    // collect resutls from PIMs
+/********************************************************************/
+/******************** collect resutls from PIMs *********************/  
+   
     for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){  
         pim_mapped_distances[cur_gpu] = (float *)pim_map(pim_distances[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
-
         memcpy(&distances[start_point[cur_gpu]],pim_mapped_distances[cur_gpu],sizeof(float)*own_num_points[cur_gpu]);
+        pim_unmap(pim_mapped_distances[cur_gpu]);        
+    }
 
-        pim_unmap(pim_mapped_distances[cur_gpu]);
-        
+/********************************************************************/
+/********************************************************************/
+
+/********************************************************************/
+/****************** free memory *************************************/
+
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){  
         pim_free(pim_locations[cur_gpu]);
         pim_free(pim_distances[cur_gpu]);
     }
@@ -144,10 +172,18 @@ float *FindNearestNeighbors_pim(
     free(pim_mapped_locations);
     free(pim_mapped_distances);
 
+    free(complete_event);
+    free(start_point);
+    free(end_point);
+    free(own_num_points);
+
     free(target_gpu);    
     free(list_of_pims);
     free(gpus_per_pim);
     free(cpus_per_pim);
+
+/********************************************************************/
+/********************************************************************/
 
     // **** PIM emulation End Mark  *********  
     pim_emu_end();

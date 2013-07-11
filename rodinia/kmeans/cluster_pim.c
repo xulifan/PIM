@@ -67,7 +67,7 @@ int cluster_pim(int      npoints,				/* number of data points */
         }
     }
 
-/******************** PIM initialization end ************************/
+/********************************************************************/
 /********************************************************************/
 
     
@@ -92,7 +92,7 @@ int cluster_pim(int      npoints,				/* number of data points */
     float **pim_mapped_cluster;
     int **pim_mapped_membership;
 
-/******************** PIM memory variable end ***********************/
+/********************************************************************/
 /********************************************************************/
 
 // **** PIM emulation Start Mark  *********
@@ -337,6 +337,11 @@ int cluster_pim(int      npoints,				/* number of data points */
 
     // **** PIM emulation End Mark  *********  
     pim_emu_end();
+
+    free(complete_event);
+    free(start_point);
+    free(end_point);
+    free(own_num_points);
 
     free(target_gpu);    
     free(list_of_pims);

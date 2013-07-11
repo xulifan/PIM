@@ -152,6 +152,7 @@ test:
 clean:
 	rm	*~ *.o *.out \
 		./kernel/*.o \
+		./kernel/*~ \
 		./util/timer/*.o \
 		./util/num/*.o \
 		./util/opencl/*.o \

@@ -1,23 +1,23 @@
 DeviceID, ThreadID, FunctionName, StartTime_ns, EndTime_ns
-ehp-cpu0, 4085, NA, 0, 756717
-ehp-cpu0, 4085, NA, 756717, 2119956
-ehp-cpu0, 4085, NA, 2119956, 2193307
-ehp-cpu0, 4085, NA, 2193307, 2268346
-ehp-cpu0, 4085, NA, 2268346, 2721658
-ehp-cpu0, 4085, NA, 2721658, 4183448
-ehp-cpu0, 4085, NA, 4183448, 4207906
-ehp-cpu0, 4085, NA, 4207906, 4232695
-ehp-cpu0, 4085, NA, 4232695, 4855109
-ehp-cpu0, 4085, NA, 4855109, 6116822
-ehp-cpu0, 4085, NA, 6116822, 6141324
-ehp-cpu0, 4085, NA, 6141324, 6166080
-ehp-cpu0, 4085, NA, 6166080, 6651482
-ehp-cpu0, 4085, NA, 6651482, 7459155
-ehp-cpu0, 4085, NA, 7459155, 8583724
-ehp-cpu0, 4085, NA, 8583724, 9220177
-ehp-cpu0, 4085, NA, 9220177, 9512586
-ehp-cpu0, 4085, NA, 9512586, 10120920
-ehp-cpu0, 4085, NA, 10120920, 10540680
+ehp-cpu0, 12354, NA, 0, 847541
+ehp-cpu0, 12354, NA, 847541, 2382407
+ehp-cpu0, 12354, NA, 2382407, 2407019
+ehp-cpu0, 12354, NA, 2407019, 3440569
+ehp-cpu0, 12354, NA, 3440569, 3465137
+ehp-cpu0, 12354, NA, 3465137, 4641500
+ehp-cpu0, 12354, NA, 4641500, 4742860
+ehp-cpu0, 12354, NA, 4742860, 4817899
+ehp-cpu0, 12354, NA, 4817899, 4871314
+ehp-cpu0, 12354, NA, 4871314, 4896125
+ehp-cpu0, 12354, NA, 4896125, 4949496
+ehp-cpu0, 12354, NA, 4949496, 4974329
+ehp-cpu0, 12354, NA, 4974329, 5429461
+ehp-cpu0, 12354, NA, 5429461, 6293912
+ehp-cpu0, 12354, NA, 6293912, 6318524
+ehp-cpu0, 12354, NA, 6318524, 7012131
+ehp-cpu0, 12354, NA, 7012131, 7036831
+ehp-cpu0, 12354, NA, 7036831, 7702286
+ehp-cpu0, 12354, NA, 7702286, 9345862
 
 ehp-cpu1, NA, NA, NA, NA
 
@@ -31,14 +31,14 @@ pim0-cpu0, NA, NA, NA, NA
 
 pim0-cpu1, NA, NA, NA, NA
 
-pim0-gpu0, 4088, NearestNeighbor, 2194307, 2195799
+pim0-gpu0, 12358, NearestNeighbor, 4743860, 4745352
 
 pim1-cpu0, NA, NA, NA, NA
 
-pim1-gpu0, 4089, NearestNeighbor, 4208906, 4210398
+pim1-gpu0, 12359, NearestNeighbor, 4872314, 4873806
 
 pim2-cpu0, NA, NA, NA, NA
 
-pim2-gpu0, 4090, NearestNeighbor, 6142324, 6143816
+pim2-gpu0, 12360, NearestNeighbor, 4950496, 4951989
 
-Total runtime: 10540680
+Total runtime: 9345862

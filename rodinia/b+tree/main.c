@@ -1822,7 +1822,7 @@ int
 main(	int argc, 
 		char** argv ) 
 {
-
+;
 	// ------------------------------------------------------------60
 	// figure out and display whether 32-bit or 64-bit architecture
 	// ------------------------------------------------------------60
@@ -2162,7 +2162,22 @@ main(	int argc,
 				}
 
 				// OpenCL kernel
-				kernel_gpu_opencl_wrapper(	records,
+				/*kernel_gpu_opencl_wrapper(	records,
+											records_mem,
+											knodes,
+											knodes_elem,
+											knodes_mem,
+
+											order,
+											maxheight,
+											count,
+
+											currKnode,
+											offset,
+											keys,
+											ans);*/
+
+				kernel1_pim_wrapper(	records,
 											records_mem,
 											knodes,
 											knodes_elem,
@@ -2308,7 +2323,24 @@ main(	int argc,
 				}
 
 				// CUDA kernel
-				kernel_gpu_opencl_wrapper_2(knodes,
+				/*kernel_gpu_opencl_wrapper_2(knodes,
+											knodes_elem,
+											knodes_mem,
+
+											order,
+											maxheight,
+											count,
+
+											currKnode,
+											offset,
+											lastKnode,
+											offset_2,
+											start,
+											end,
+											recstart,
+											reclength);*/
+
+                kernel2_pim_wrapper(knodes,
 											knodes_elem,
 											knodes_mem,
 

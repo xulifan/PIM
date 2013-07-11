@@ -48,7 +48,7 @@ void run_bfs_pim(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
         }
     }
 
-/******************** PIM initialization end ************************/
+/********************************************************************/
 /********************************************************************/
 
 
@@ -79,7 +79,7 @@ void run_bfs_pim(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
     char **pim_mapped_over;
 
 
-/******************** PIM memory variable end ***********************/
+/********************************************************************/
 /********************************************************************/
 
 
@@ -105,7 +105,7 @@ void run_bfs_pim(int no_of_nodes, Node *h_graph_nodes, int edge_list_size, \
     pim_mapped_cost=(int **)malloc(sizeof(int*)*num_gpus);
     pim_mapped_over=(char **)malloc(sizeof(char *)*num_gpus);
 
-/******************** PIM memory variable allocate end **************/
+/********************************************************************/
 /********************************************************************/
 
 
