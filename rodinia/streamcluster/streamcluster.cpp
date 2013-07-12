@@ -362,6 +362,7 @@ float pFL(Points *points, int *feasible, int numfeasible,
 		//										&serial, &cpu_gpu_memcpy, &memcpy_back, &gpu_malloc, &kernel);
         change += pgain_pim(feasible[x], points, z, k, kmax, is_center, center_table, switch_membership,
 												&serial, &cpu_gpu_memcpy, &memcpy_back, &gpu_malloc, &kernel);
+        //break;
     }		
     cost -= change;
 #ifdef PRINTINFO
@@ -621,6 +622,7 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
       { 
 	break;
       }
+    //break;
 #ifdef ENABLE_THREADS
     pthread_barrier_wait(barrier);
 #endif
@@ -821,6 +823,7 @@ void streamCluster( PStream* stream,
     }
 
     switch_membership = (char*)malloc(points.num*sizeof(char));
+    memset(switch_membership,0,points.num*sizeof(char));
     is_center = (bool*)calloc(points.num,sizeof(bool));
     center_table = (int*)malloc(points.num*sizeof(int));
 
@@ -854,9 +857,10 @@ void streamCluster( PStream* stream,
 
   //finally cluster all temp centers
   switch_membership = (char*)malloc(centers.num*sizeof(char));
+  memset(switch_membership,0,points.num*sizeof(char));
   is_center = (bool*)calloc(centers.num,sizeof(bool));
   center_table = (int*)malloc(centers.num*sizeof(int));
-
+  
   localSearch( &centers, kmin, kmax ,&kfinal );
   contcenters(&centers);
   outcenterIDs( &centers, centerIDs, outfile);

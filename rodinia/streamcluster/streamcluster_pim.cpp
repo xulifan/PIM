@@ -21,7 +21,7 @@ float pgain_pim( long x, Points *points, float z, long int *numcenters, int kmax
 
 	coord_h = (float*) malloc( num * dim * sizeof(float));								// coordinates (host)
 	gl_lower = (float*) malloc( kmax * sizeof(float) );
-	work_mem_h = (float*)_clMallocHost(kmax*num*sizeof(float));
+	work_mem_h = (float*)malloc(kmax*num*sizeof(float));
 	p_h = (Point_Struct*)malloc(num*sizeof(Point_Struct));	//by cambine: not compatibal with original Point
 	
 	// prepare mapping for point coordinates
@@ -173,7 +173,7 @@ float pgain_pim( long x, Points *points, float z, long int *numcenters, int kmax
         memset(pim_mapped_work_mem[cur_gpu],0,(K+1)*num*sizeof(float)); // K+1 == kmax??
         memcpy(pim_mapped_center_table[cur_gpu],center_table, num*sizeof(int));
         memset(pim_mapped_switch_membership[cur_gpu],0,num*sizeof(char));
-
+        
         pim_unmap(pim_mapped_p[cur_gpu]);
         pim_unmap(pim_mapped_coord[cur_gpu]);
         pim_unmap(pim_mapped_work_mem[cur_gpu]);
@@ -206,10 +206,13 @@ float pgain_pim( long x, Points *points, float z, long int *numcenters, int kmax
 
 /********************************************************************/
 /******************** collect resutls from PIMs *********************/  
-   
+
+    /* switch_membership and work_mem_h need to be reset to all 0s */
+    /* because their copy in PIM are initialy all 0s */
+    memset(switch_membership,0,sizeof(char)*num);
+    memset(work_mem_h,0,sizeof(float)*num*(K+1));
     pim_array_sync(switch_membership, pim_mapped_switch_membership, pim_switch_membership, num, num_gpus);
     pim_array_sync(work_mem_h,pim_mapped_work_mem,pim_work_mem, (K+1)*num, num_gpus);
-    
 
 /********************************************************************/
 /********************************************************************/
@@ -303,6 +306,10 @@ float pgain_pim( long x, Points *points, float z, long int *numcenters, int kmax
 
 	c++;
 
+    //free(coord_h );								// coordinates (host)
+	//free(gl_lower);
+	//free(work_mem_h);
+	//free(p_h);	//by cambine: not compatibal with original Point
 
 	/*FILE *fp = fopen("data_opencl.txt", "a");
 	fprintf(fp,"%d, %f\n", c, gl_cost);
@@ -323,7 +330,10 @@ template <typename T> void array_merge(T *original, T *source, T *result, int n)
 {
     for(int i=0;i<n;i++){
         T temp=source[i];
-        if(original[i]!=temp) result[i]=temp;
+        if(original[i]!=temp) {
+            //printf("%d %d %d\n",i,temp,original[i]);
+            result[i]=temp;
+        }
     }
 }
 
@@ -331,7 +341,10 @@ template <typename T> void pim_array_sync(T *host_array, T **pim_mapped_array, v
 {
     T *host_array_sync=(T *)malloc(sizeof(T)*array_size);
     memcpy(host_array_sync,host_array,sizeof(T)*array_size);
+    //for(int i=0;i<array_size;i++) printf("%d%d ",i,host_array[i]);
+    //printf("\n");
     for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){ 
+        //printf("gpu merge %d\n",cur_gpu);
         pim_mapped_array[cur_gpu] = (T *)pim_map(pim_array[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
         array_merge(host_array,pim_mapped_array[cur_gpu],host_array_sync,array_size);
         
