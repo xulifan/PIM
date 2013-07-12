@@ -167,8 +167,8 @@ void map_pims(int num_pims, int *num_gpus, int *num_cpus, int *gpus_per_pim, int
         number_of_pim_cpus += cpus_per_pim[i];
 	}
 
-    printf("Number of PIM CPUs: %u \n", number_of_pim_cpus);
-    printf("Number of PIM GPUs: %u \n", number_of_pim_gpus);
+    //printf("Number of PIM CPUs: %u \n", number_of_pim_cpus);
+    //printf("Number of PIM GPUs: %u \n", number_of_pim_gpus);
 
     *num_gpus = number_of_pim_gpus;
     *num_cpus = number_of_pim_cpus;
@@ -198,7 +198,7 @@ void get_pim_gpu_ids(int num_gpus, pim_device_id *list_of_gpus)
 void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device_id *list_of_pims)
 {
 
-    printf("\nProperties:\n\n");
+    //printf("\nProperties:\n\n");
     int failure=0;
 
     for (int i = 0; i < num_pims; i++) {
@@ -207,10 +207,10 @@ void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device
         size_t ret_size;
         uint32_t mem_mbps,num_channels;
         uint32_t mem_size=0;
-        printf("PIM %d:\n", i);
-        printf("Num of CPUs %d:\n", num_cpus);
-        printf("Num of GPUs %d:\n\n", num_gpus);
-        printf("Memory info:\n");
+        //printf("PIM %d:\n", i);
+        //printf("Num of CPUs %d:\n", num_cpus);
+        //printf("Num of GPUs %d:\n\n", num_gpus);
+        //printf("Memory info:\n");
         
         failure=pim_get_device_info(list_of_pims[i], PIM_MEM_CAPACITY, sizeof(uint32_t), &mem_size, &ret_size);
         ASSERT_PIM_RETURN(failure);
@@ -219,9 +219,9 @@ void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device
         failure=pim_get_device_info(list_of_pims[i], PIM_MEM_NUM_CHANNELS, sizeof(int), &num_channels, &ret_size);
         ASSERT_PIM_RETURN(failure);
         
-        printf("MEMORY SIZE(MB): %d\n",mem_size);
-        printf("MEMORY GIGABITS PER SECOND: %5.2f\n", (double)mem_mbps/1000);
-        printf("NUM CHANNELS: %d\n\n", num_channels);
+        //printf("MEMORY SIZE(MB): %d\n",mem_size);
+        //printf("MEMORY GIGABITS PER SECOND: %5.2f\n", (double)mem_mbps/1000);
+        //printf("NUM CHANNELS: %d\n\n", num_channels);
 
         if ( num_gpus > 0 ) {
             uint32_t num_cus;
@@ -232,9 +232,9 @@ void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device
             failure=pim_get_device_info(list_of_pims[i], PIM_GPU_FREQ, sizeof(uint32_t), &eng_clock, &ret_size);
             ASSERT_PIM_RETURN(failure);            
 
-            printf("GPU %d:\n", 0);
-            printf("NUM COMPUTE UNITS: %d\n", num_cus);
-            printf("ENGINE CLOCK: %5.2f\n\n", (double)eng_clock/1000 );
+            //printf("GPU %d:\n", 0);
+            //printf("NUM COMPUTE UNITS: %d\n", num_cus);
+            //printf("ENGINE CLOCK: %5.2f\n\n", (double)eng_clock/1000 );
             
         }
 
@@ -244,8 +244,8 @@ void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device
             failure=pim_get_device_info(list_of_pims[i], PIM_CPU_FREQ, sizeof(uint32_t), &eng_clock, &ret_size);
             ASSERT_PIM_RETURN(failure);
 
-            printf("CPU %d:\n", 0);
-            printf("ENGINE CLOCK: %5.2f\n\n", (double)eng_clock/1000 );
+            //printf("CPU %d:\n", 0);
+            //printf("ENGINE CLOCK: %5.2f\n\n", (double)eng_clock/1000 );
         }
     }
 
@@ -313,4 +313,79 @@ void pim_spawn_args(void **args,size_t *sizes, size_t *nargs, char *ocl_source, 
     
     
     *nargs=nargs_tmp;
+}
+
+
+// merge the array souce[] with original[]
+// and generating new array result[]
+template <typename T> void array_merge(T *original, T *source, T *result, int n)
+{
+    for(int i=0;i<n;i++){
+        T temp=source[i];
+        if(original[i]!=temp) {
+            //printf("%d %d %d\n",i,temp,original[i]);
+            result[i]=temp;
+        }
+    }
+}
+
+// make sure pim_array is copied from host_array before pim execution
+// this function collects changes in pim_array from different PIMs
+// then update the host_array and copy the new host_array to each pim_array
+template <typename T> void pim_array_sync(T *host_array, T **pim_mapped_array, void **pim_array, int array_size, int num_gpus)
+{
+    T *host_array_sync=(T *)malloc(sizeof(T)*array_size);
+    memcpy(host_array_sync,host_array,sizeof(T)*array_size);
+    //for(int i=0;i<array_size;i++) printf("%d%d ",i,host_array[i]);
+    //printf("\n");
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){ 
+        //printf("gpu merge %d\n",cur_gpu);
+        pim_mapped_array[cur_gpu] = (T *)pim_map(pim_array[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
+        array_merge(host_array,pim_mapped_array[cur_gpu],host_array_sync,array_size);
+        
+    } 
+    
+    memcpy(host_array,host_array_sync,sizeof(T)*array_size);
+    free(host_array_sync);
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){ 
+        memcpy(pim_mapped_array[cur_gpu],host_array,sizeof(T) *array_size);
+        pim_unmap(pim_mapped_array[cur_gpu]);
+    }
+    
+}
+
+
+template <typename T> void pim_memcpyHtoD(T *host_array, void *pim_array, int array_size)
+{
+    T *pim_mapped_array=(T *)pim_map(pim_array,PIM_PLATFORM_OPENCL_GPU);
+    memcpy(pim_mapped_array,host_array,array_size*sizeof(T));
+    pim_unmap(pim_mapped_array);
+}
+
+template <typename T> void pim_memcpyDtoH(T *host_array, void *pim_array, int array_size)
+{
+    T *pim_mapped_array=(T *)pim_map(pim_array,PIM_PLATFORM_OPENCL_GPU);
+    memcpy(host_array,pim_mapped_array,array_size*sizeof(T));
+    pim_unmap(pim_mapped_array);
+}
+
+// domain decompostion for multiple PIMs
+// for example: given 4 points and 3 PIMs
+// the points assigned to each PIM in order would be 2 1 1
+void pim_domain_decomposition(int *start_point, int *end_point, int *own_num_points, int num_gpus, int npoints)
+{
+    int points_per_gpu=npoints/num_gpus;
+    int remain=npoints%num_gpus;
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
+        own_num_points[cur_gpu] = points_per_gpu;
+    }
+    for(int cur_gpu=0;cur_gpu<remain;cur_gpu++){
+        own_num_points[cur_gpu]+=1;
+    }
+    int start=0;
+    for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
+        start_point[cur_gpu]=start;
+        start+=own_num_points[cur_gpu];
+        end_point[cur_gpu]=start;
+    }
 }

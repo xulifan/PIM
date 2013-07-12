@@ -21,7 +21,7 @@
 #include <algorithm>
 
 #include <pim.h>
-#include "pim_utility.c"
+#include "pim_utility.cpp"
 
 	
 #define REC_LENGTH 49 // size of a record in db

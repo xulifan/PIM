@@ -49,7 +49,6 @@ float *FindNearestNeighbors_pim(
 /********************************************************************/
 /********************************************************************/
 
-    int points_per_gpu=(numRecords+num_gpus-1)/num_gpus;
     cl_event *complete_event=(cl_event *)calloc(num_gpus,sizeof(cl_event));
 
     int *start_point=(int *)calloc(num_gpus,sizeof(int));
@@ -86,12 +85,9 @@ float *FindNearestNeighbors_pim(
 /********************************************************************/
 /****************** Domain Decomposition ****************************/
 
+    pim_domain_decomposition(start_point, end_point, own_num_points, num_gpus, numRecords);
     for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
-        start_point[cur_gpu]= cur_gpu*points_per_gpu;
-        end_point[cur_gpu]= start_point[cur_gpu]+points_per_gpu;
-        if(end_point[cur_gpu]>numRecords) end_point[cur_gpu]=numRecords;
-        own_num_points[cur_gpu] = end_point[cur_gpu]-start_point[cur_gpu];
-        printf("GPU %d is calculating %d records from %d to %d\n",cur_gpu,own_num_points[cur_gpu],start_point[cur_gpu],end_point[cur_gpu]);
+        printf("GPU %d is calculating %d records from %d to %d for Fan1\n",cur_gpu,own_num_points[cur_gpu],start_point[cur_gpu],end_point[cur_gpu]);
     }
 
 /********************************************************************/
@@ -113,9 +109,10 @@ float *FindNearestNeighbors_pim(
 
     for(int cur_gpu=0;cur_gpu<num_gpus;cur_gpu++){
         /* copy features of points to PIM */
-        pim_mapped_locations[cur_gpu] = (LatLong *)pim_map(pim_locations[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
-        memcpy(pim_mapped_locations[cur_gpu],&locations[start_point[cur_gpu]],sizeof(LatLong) *own_num_points[cur_gpu]);
-        pim_unmap(pim_mapped_locations[cur_gpu]);
+        //pim_mapped_locations[cur_gpu] = (LatLong *)pim_map(pim_locations[cur_gpu],PIM_PLATFORM_OPENCL_GPU);
+        //memcpy(pim_mapped_locations[cur_gpu],&locations[start_point[cur_gpu]],sizeof(LatLong) *own_num_points[cur_gpu]);
+        //pim_unmap(pim_mapped_locations[cur_gpu]);
+        pim_memcpyHtoD(&locations[start_point[cur_gpu]],pim_locations[cur_gpu],own_num_points[cur_gpu]);
     }
 
 /********************************************************************/

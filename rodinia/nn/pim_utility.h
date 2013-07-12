@@ -14,3 +14,10 @@ void map_pims(int num_pims, int *num_gpus, int *num_cpus, int *gpus_per_pim, int
 void pim_property(int num_pims, int *gpus_per_pim, int *cpus_per_pim, pim_device_id *list_of_pims);
 
 void pim_spawn_args(void **args,size_t *sizes, size_t *nargs, char *ocl_source, char *build_flags, int dim, size_t *glbl, size_t *lcl, int *num_pre_event, cl_event * pre_event_list, cl_event *post_event_list);
+
+template <typename T> void array_merge(T *original, T *source, T *result, int n);
+template <typename T> void pim_array_sync(T *host_array, T **pim_mapped_array, void **pim_array, int array_size, int num_gpu);
+template <typename T> void pim_memcpyDtoH(T *host_array, void *pim_array, int array_size);
+template <typename T> void pim_memcpyHtoD(T *host_array, void *pim_array, int array_size);
+
+void pim_domain_decomposition(int *start_point, int *end_point, int *own_num_points, int num_gpus, int npoints);
