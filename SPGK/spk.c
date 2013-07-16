@@ -32,23 +32,23 @@ int main(int argc, char *argv[])
     }
     else if(option ==1){
 
-        // use only one PIM and only process one pair of graphs
+        printf(" use only one PIM and only process one pair of graphs \n");
         SPGK_PIM();
     }
     else if(option ==2){
-        // use multiple PIMs in parallel, each PIM can process one pair of graphs
+        printf(" use multiple PIMs in parallel, each PIM can process one pair of graphs\n");
         SPGK_mult_PIM();
     }
     else if(option ==3){
-        // use multiple PIMs on one pair of graphs (scheme 1)
+        printf(" use multiple PIMs on one pair of graphs (scheme 1) \n");
         SPGK_mult_PIM_one_pair_1();
     }
     else if(option ==4){
-        // use multiple PIMs on one pair of graphs (scheme 2)
+        printf(" use multiple PIMs on one pair of graphs (scheme 2) \n");
         SPGK_mult_PIM_one_pair_2();
     }
     else if(option ==5){
-        // use multiple PIMS on one pair of graphs (scheme 3)
+        printf(" use multiple PIMS on one pair of graphs (scheme 3) \n");
         SPGK_mult_PIM_one_pair_3();
     }
 
