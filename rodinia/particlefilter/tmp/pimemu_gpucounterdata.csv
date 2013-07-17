@@ -1,0 +1,29 @@
+#ProfileFileVersion=2.6
+#ProfilerVersion=2.6.2153
+#Application=/home/lifxu/Desktop/github-test/PIM/rodinia/particlefilter/OCL_particlefilter_double
+#ApplicationArgs=-x 128 -y 128 -z 10 -np 10000
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Vendor=Advanced Micro Devices, Inc.
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Name=AMD Accelerated Parallel Processing
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLDriver Version=1124.2 (sse2,avx,fma4)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   NumberAppAddressBits=64
+#Device Tahiti Platform Vendor=Advanced Micro Devices, Inc.
+#Device Tahiti Platform Name=AMD Accelerated Parallel Processing
+#Device Tahiti Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti CLDriver Version=1124.2 (VM)
+#Device Tahiti CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti NumberAppAddressBits=32
+#OS Version=CentOS release 6.4 (Final)
+#DisplayName=
+#ListSeparator=,
+Method, ExecutionOrder, ThreadID, CallIndex, GlobalWorkSize, WorkGroupSize, Time, LocalMemSize, VGPRs, SGPRs, ScratchRegs, FCStacks, Wavefronts, VALUInsts, SALUInsts, VFetchInsts, SFetchInsts, VWriteInsts, LDSInsts, VALUUtilization, VALUBusy, SALUBusy, FetchSize, CacheHit, MemUnitBusy, MemUnitStalled, WriteUnitStalled, LDSBankConflict, WriteSize, GDSInsts
+likelihood_kernel_pim__k1_Tahiti1, 1, 30743, 0, {   3584       1       1}, {  256     1     1},         0.69007, 2048, 63, 56, 0, NA,        56.00,      5804.50,       214.32,       273.52,        32.88,        75.96,        17.89,        98.15,        10.51,         0.36,       942.12,        93.17,        26.48,         5.84,         0.00,         0.00,      1679.59,         0.00
+likelihood_kernel_pim__k1_Tahiti1, 2, 30744, 0, {   3584       1       1}, {  256     1     1},         0.36415, 2048, 63, 56, 0, NA,        56.00,      5804.50,       214.32,       273.52,        32.88,        75.96,        17.89,        98.12,        12.09,         0.41,       950.06,        91.96,        28.18,         7.17,         0.00,         0.00,      1669.81,         0.00
+likelihood_kernel_pim__k1_Tahiti1, 3, 30745, 0, {   3584       1       1}, {  256     1     1},         0.36415, 2048, 63, 56, 0, NA,        56.00,      5804.45,       214.16,       273.52,        32.88,        75.96,        17.89,        98.12,        12.02,         0.41,       952.06,        92.03,        28.94,         7.84,         0.00,         0.00,      1642.84,         0.00
+normalize_weights_kernel_pim__k2_Tahiti1, 4, 30746, 0, {   3584       1       1}, {  256     1     1},         6.38741, 128, 30, 28, 0, NA,        56.00,      1164.07,       187.66,       180.59,        11.04,       180.61,         2.00,        16.28,         0.08,         0.02,        80.25,        76.50,         0.01,         0.00,         0.00,         0.00,         1.12,         0.00
+normalize_weights_kernel_pim__k2_Tahiti1, 5, 30747, 0, {   3584       1       1}, {  256     1     1},         0.01007, 128, 30, 28, 0, NA,        56.00,        91.00,         9.00,         2.00,        11.00,         2.00,         2.00,        98.66,         2.28,         0.18,        29.25,        43.67,         2.66,         0.05,         0.13,         0.00,         0.00,         0.00
+normalize_weights_kernel_pim__k2_Tahiti1, 6, 30748, 0, {   3584       1       1}, {  256     1     1},         0.00963, 128, 30, 28, 0, NA,        56.00,        86.77,         9.00,         1.95,        11.00,         1.89,         1.95,        96.89,         3.69,         0.31,        27.25,        43.44,         4.54,         0.08,         0.00,         0.00,         0.00,         0.00
+find_index_kernel_pim__k3_Tahiti1, 7, 30749, 0, {   3584       1       1}, {  256     1     1},         0.56711, 0, 7, 24, 0, NA,        56.00,      6532.21,      4570.39,       654.32,        16.00,         2.00,         0.00,        83.54,         2.87,         3.09,        40.38,        42.87,        20.04,         0.01,         0.00,         0.00,         0.00,         0.00
+find_index_kernel_pim__k3_Tahiti1, 8, 30750, 0, {   3584       1       1}, {  256     1     1},         0.80844, 0, 7, 24, 0, NA,        56.00,     16311.50,     11415.91,      1632.25,        16.00,         2.00,         0.00,        84.30,         5.00,         5.39,        45.12,        64.05,        27.80,         0.00,         0.00,         0.00,         0.00,         0.00
+find_index_kernel_pim__k3_Tahiti1, 9, 30751, 0, {   3584       1       1}, {  256     1     1},         1.44015, 0, 7, 24, 0, NA,        56.00,     23579.91,     16503.89,      2359.00,        15.68,         1.89,         0.00,        82.18,         4.30,         4.63,        53.25,        71.89,        25.61,         0.00,         0.00,         0.00,         0.00,         0.00

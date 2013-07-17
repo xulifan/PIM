@@ -1,0 +1,26 @@
+#ProfileFileVersion=2.6
+#ProfilerVersion=2.6.2153
+#Application=/home/lifxu/Desktop/github-test/PIM/rodinia/b+tree/b+tree.out
+#ApplicationArgs=file /home/lifxu/Desktop/Benchmarks/rodinia_2.3/data/b+tree/mil.txt command /home/lifxu/Desktop/Benchmarks/rodinia_2.3/data/b+tree/command.txt
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Vendor=Advanced Micro Devices, Inc.
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Name=AMD Accelerated Parallel Processing
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLDriver Version=1124.2 (sse2,avx,fma4)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   NumberAppAddressBits=64
+#Device Tahiti Platform Vendor=Advanced Micro Devices, Inc.
+#Device Tahiti Platform Name=AMD Accelerated Parallel Processing
+#Device Tahiti Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti CLDriver Version=1124.2 (VM)
+#Device Tahiti CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti NumberAppAddressBits=32
+#OS Version=CentOS release 6.4 (Final)
+#DisplayName=
+#ListSeparator=,
+Method, ExecutionOrder, ThreadID, CallIndex, GlobalWorkSize, WorkGroupSize, Time, LocalMemSize, VGPRs, SGPRs, ScratchRegs, FCStacks, Wavefronts, VALUInsts, SALUInsts, VFetchInsts, SFetchInsts, VWriteInsts, LDSInsts, VALUUtilization, VALUBusy, SALUBusy, FetchSize, CacheHit, MemUnitBusy, MemUnitStalled, WriteUnitStalled, LDSBankConflict, WriteSize, GDSInsts
+findK_pim__k1_Tahiti1, 1, 18789, 0, { 853504       1       1}, {  256     1     1},         0.41926, 0, 13, 32, 0, NA,     13336.00,        41.00,        25.51,         9.75,        14.50,         1.25,         0.00,        81.32,        20.36,        17.91,      3799.25,        37.26,        55.91,         1.62,         0.00,         0.00,        33.78,         0.00
+findK_pim__k1_Tahiti1, 2, 18790, 0, { 853504       1       1}, {  256     1     1},         0.40948, 0, 13, 32, 0, NA,     13336.00,        41.01,        25.52,         9.76,        14.50,         1.25,         0.00,        81.32,        21.52,        18.93,      3762.69,        37.76,        59.65,         1.73,         0.00,         0.00,        33.69,         0.00
+findK_pim__k1_Tahiti1, 3, 18791, 0, { 852992       1       1}, {  256     1     1},         0.40933, 0, 13, 32, 0, NA,     13328.00,        41.00,        25.51,         9.75,        14.50,         1.25,         0.00,        81.33,        21.44,        18.85,      3779.00,        37.38,        59.62,         1.70,         0.00,         0.00,        33.09,         0.00
+findRangeK_pim__k2_Tahiti1, 4, 18792, 0, { 512000       1       1}, {  256     1     1},         0.40104, 0, 14, 42, 0, NA,      8000.00,        61.01,        42.76,        18.01,        21.25,         2.50,         0.00,        84.50,        17.45,        17.35,      4435.44,        57.30,        57.11,         1.85,         0.00,         0.00,        73.56,         0.00
+findRangeK_pim__k2_Tahiti1, 5, 18793, 0, { 512000       1       1}, {  256     1     1},         0.39052, 0, 14, 42, 0, NA,      8000.00,        61.01,        42.76,        18.01,        21.25,         2.50,         0.00,        84.50,        18.30,        18.20,      4453.81,        57.39,        59.64,         1.94,         0.00,         0.00,        73.03,         0.00
+findRangeK_pim__k2_Tahiti1, 6, 18794, 0, { 512000       1       1}, {  256     1     1},         0.38978, 0, 14, 42, 0, NA,      8000.00,        61.00,        42.75,        18.00,        21.25,         2.50,         0.00,        84.50,        18.25,        18.14,      4451.81,        57.34,        59.96,         1.93,         0.00,         0.00,        72.75,         0.00

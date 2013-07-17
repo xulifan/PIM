@@ -1,0 +1,6 @@
+Domain Decomposition for OpenCL:
+	size_t global_work[3] = { BLOCK_SIZE, BLOCK_SIZE * num_blocks, 1 }; 
+	size_t local_work[3] = { BLOCK_SIZE, BLOCK_SIZE, 1 };
+
+Domain Decomposition for PIM:
+    divide num_blocks into chunks and each PIM gets one

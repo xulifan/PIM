@@ -1,0 +1,22 @@
+#ProfileFileVersion=2.6
+#ProfilerVersion=2.6.2153
+#Application=/home/lifxu/rodinia_2.3/opencl/backprop/backprop
+#ApplicationArgs=65536
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Vendor=Advanced Micro Devices, Inc.
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Name=AMD Accelerated Parallel Processing
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLDriver Version=1124.2 (sse2,avx,fma4)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   NumberAppAddressBits=64
+#Device Tahiti Platform Vendor=Advanced Micro Devices, Inc.
+#Device Tahiti Platform Name=AMD Accelerated Parallel Processing
+#Device Tahiti Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti CLDriver Version=1124.2 (VM)
+#Device Tahiti CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti NumberAppAddressBits=32
+#OS Version=CentOS release 6.4 (Final)
+#DisplayName=
+#ListSeparator=,
+Method, ExecutionOrder, ThreadID, CallIndex, GlobalWorkSize, WorkGroupSize, Time, LocalMemSize, VGPRs, SGPRs, ScratchRegs, FCStacks, Wavefronts, VALUInsts, SALUInsts, VFetchInsts, SFetchInsts, VWriteInsts, LDSInsts, VALUUtilization, VALUBusy, SALUBusy, FetchSize, CacheHit, MemUnitBusy, MemUnitStalled, WriteUnitStalled, LDSBankConflict, WriteSize, GDSInsts
+bpnn_layerforward_ocl__k1_Tahiti1, 1, 7192, 27, {     16   65536       1}, {   16    16     1},         0.42474, 1152, 7, 20, 0, NA,     16384.00,        41.50,        17.00,         2.00,        10.00,         2.00,        17.25,        65.73,        16.64,        12.71,      4609.81,        56.23,        28.70,         0.90,        61.09,         0.00,      4228.94,         0.00
+bpnn_adjust_weights_ocl__k2_Tahiti1, 2, 7192, 38, {     16   65536       1}, {   16    16     1},         0.77185, 0, 9, 24, 0, NA,     16384.00,        19.00,         4.00,         4.00,        10.00,         2.00,         0.00,        95.45,         4.92,         1.79,      9030.94,        47.70,        84.40,        51.00,        79.68,         0.00,      8444.59,         0.00

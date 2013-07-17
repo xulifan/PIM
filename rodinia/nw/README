@@ -1,0 +1,32 @@
+There are two kernels in this code:
+	for( int blk = 1 ; blk <= worksize/BLOCK_SIZE ; blk++){
+	
+		global_work[0] = BLOCK_SIZE * blk;
+		local_work[0]  = BLOCK_SIZE;
+		clSetKernelArg(kernel1, 7, sizeof(cl_int), (void*) &blk);
+		err = clEnqueueNDRangeKernel(cmd_queue, kernel1, 2, NULL, global_work, local_work, 0, 0, 0);
+		if(err != CL_SUCCESS) { printf("ERROR: 1  clEnqueueNDRangeKernel()=>%d failed\n", err); return -1; }			
+	}
+	clFinish(cmd_queue);
+	
+	printf("Processing lower-right matrix\n");
+	for( int blk =  worksize/BLOCK_SIZE - 1  ; blk >= 1 ; blk--){	   
+		global_work[0] = BLOCK_SIZE * blk;
+		local_work[0] =  BLOCK_SIZE;
+		clSetKernelArg(kernel2, 7, sizeof(cl_int), (void*) &blk);
+        err = clEnqueueNDRangeKernel(cmd_queue, kernel2, 2, NULL, global_work, local_work, 0, 0, 0);
+		if(err != CL_SUCCESS) { printf("ERROR: 2 clEnqueueNDRangeKernel()=>%d failed\n", err); return -1; }
+	}
+The local_work[0] is fixed for both kernels.
+For the first kernel, global_work[0] increases by one block for each iteration
+For the second kernel, global_work[0] decreses by one block for each iteration
+
+To use multiple PIM, assign equal number of blocks to each PIM. In this case, the first few iterations may have only one PIM running.
+
+
+Note: This program generate two sequences randomly. Please specify your own sequences for different uses.
+      At the current stage, the program only supports two sequences with the same lengh, which can be divided by 16. 
+Usage: ./nw 2048 10 ./nw.cl
+	  2048 //the length of the sequence
+	  10 //penalty value
+	  ./nw.cl  //ocl kernel file

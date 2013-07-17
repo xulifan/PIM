@@ -1,0 +1,23 @@
+#ProfileFileVersion=2.6
+#ProfilerVersion=2.6.2153
+#Application=/home/lifxu/Desktop/github-test/PIM/rodinia/nn/nn.exe
+#ApplicationArgs=filelist.txt -r 10 -lat 30 -lng 90
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Vendor=Advanced Micro Devices, Inc.
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Name=AMD Accelerated Parallel Processing
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLDriver Version=1124.2 (sse2,avx,fma4)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device AMD A10-5800K APU with Radeon(tm) HD Graphics   NumberAppAddressBits=64
+#Device Tahiti Platform Vendor=Advanced Micro Devices, Inc.
+#Device Tahiti Platform Name=AMD Accelerated Parallel Processing
+#Device Tahiti Platform Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti CLDriver Version=1124.2 (VM)
+#Device Tahiti CLRuntime Version=OpenCL 1.2 AMD-APP (1124.2)
+#Device Tahiti NumberAppAddressBits=32
+#OS Version=CentOS release 6.4 (Final)
+#DisplayName=
+#ListSeparator=,
+Method, ExecutionOrder, ThreadID, CallIndex, GlobalWorkSize, WorkGroupSize, Time, LocalMemSize, VGPRs, SGPRs, ScratchRegs, FCStacks, Wavefronts, VALUInsts, SALUInsts, VFetchInsts, SFetchInsts, VWriteInsts, LDSInsts, VALUUtilization, VALUBusy, SALUBusy, FetchSize, CacheHit, MemUnitBusy, MemUnitStalled, WriteUnitStalled, LDSBankConflict, WriteSize, GDSInsts
+NearestNeighbor__k1_Tahiti1, 1, 7736, 0, {  14336       1       1}, {  256     1     1},         0.03245, 0, 3, 16, 0, NA,       224.00,        13.96,         2.00,         1.99,         8.99,         1.00,         0.00,        99.92,         1.50,         0.35,       111.88,         2.05,         9.73,         0.45,         0.00,         0.00,         0.00,         0.00
+NearestNeighbor__k1_Tahiti1, 2, 7737, 0, {  14336       1       1}, {  256     1     1},         0.02385, 0, 3, 16, 0, NA,       224.00,        13.96,         2.00,         1.99,         8.99,         1.00,         0.00,        99.92,         1.50,         0.35,       111.88,         2.05,         9.98,         0.47,         0.00,         0.00,         0.00,         0.00
+NearestNeighbor__k1_Tahiti1, 3, 7738, 0, {  14336       1       1}, {  256     1     1},         0.02933, 0, 3, 16, 0, NA,       224.00,        13.96,         2.00,         1.99,         8.99,         1.00,         0.00,        99.91,         1.37,         0.32,       111.88,         2.05,         8.49,         0.38,         0.00,         0.00,         0.06,         0.00

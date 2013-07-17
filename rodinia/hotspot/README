@@ -1,0 +1,12 @@
+Domain decomposition for OpenCL:
+
+	size_t global_work_size[2];
+	global_work_size[0] = BLOCK_SIZE * blockCols;
+	global_work_size[1] = BLOCK_SIZE * blockRows;
+	size_t local_work_size[2];
+	local_work_size[0] = BLOCK_SIZE;
+	local_work_size[1] = BLOCK_SIZE;
+
+Domain decomposition for multiple PIMs:
+    each PIM get some number of columns
+    each PIM simulates all Rows of its own columns
